@@ -21,7 +21,7 @@ const Author = () => {
   return (
     <AuthorContainer>
       <AuthorHeaderContainer>
-        v1.0.3 @Hong
+        v1.0.4 @Hong
       </AuthorHeaderContainer>
       <AuthorSubContainer>
         피드백은 DM으로 부탁드려요🙏
