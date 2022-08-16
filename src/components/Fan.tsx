@@ -22,10 +22,11 @@ const FanRPMContainer = styled.div<{ speed: number }>`
   position: fixed;
   width: 100vw;
   text-align: center;
-  font-size: 25vw;
+  font-size: calc(1rem + 2vmin);
   font-weight: bolder;
+  color: #626977;
 
-  animation: Vibrate 10ms linear infinite;
+  animation: Vibrate 5ms linear infinite;
   animation-play-state: ${props => props.speed <= HIGH_SPEED ? `running` : `paused`};
   
   ${props => props.speed <= HIGH_SPEED && `color: #ff3333`};
@@ -35,10 +36,10 @@ const FanRPMContainer = styled.div<{ speed: number }>`
       transform: translate(0, 0);
     }
     25% {
-      transform: translate(3px, 0);
+      transform: translate(5px, 0);
     }
     75% {
-      transform: translate(-3px, 0);
+      transform: translate(-5px, 0);
     }
   }
 `;
@@ -213,7 +214,7 @@ function Fan() {
   return (
     <div className="App">
       <FanRPMContainer speed={duration}>
-        {rpmRef.current}RPM
+        {rpmRef.current.toFixed()}<span style={{fontSize: "1rem"}}>RPM</span>
       </FanRPMContainer>
       <FanContainer>
         <FanImgContainer

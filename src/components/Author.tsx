@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 
 const AuthorContainer = styled.div`
@@ -18,16 +18,26 @@ const AuthorSubContainer = styled.div`
 `;
 
 const Author = () => {
+  const [dm, setDM] = useState("DM");
+
+  const onHover = () => {
+    setDM("DaouMessenger");
+  }
+
+  const onLeave = () => {
+    setDM("DM");
+  }
+
   return (
     <AuthorContainer>
       <AuthorHeaderContainer>
-        v1.1.0 @Hong
+        v1.1.1 @Hong
       </AuthorHeaderContainer>
       <AuthorSubContainer>
         신규기능 : 이미지 파일 Drag&Drop 📁
       </AuthorSubContainer>
       <AuthorSubContainer>
-        피드백은 DM으로 부탁드려요🙏
+        피드백은 <span style={{color: "#61dafb"}} onMouseOver={onHover} onMouseLeave={onLeave}>{dm}</span> 부탁드려요🙏
       </AuthorSubContainer>
     </AuthorContainer>
   );
