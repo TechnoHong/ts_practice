@@ -21,8 +21,11 @@ const Author = () => {
   return (
     <AuthorContainer>
       <AuthorHeaderContainer>
-        v1.0.4 @Hong
+        v1.1.0 @Hong
       </AuthorHeaderContainer>
+      <AuthorSubContainer>
+        신규기능 : 이미지 파일 Drag&Drop 📁
+      </AuthorSubContainer>
       <AuthorSubContainer>
         피드백은 DM으로 부탁드려요🙏
       </AuthorSubContainer>

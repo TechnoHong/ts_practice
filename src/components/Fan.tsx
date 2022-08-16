@@ -3,7 +3,9 @@ import styled from "styled-components";
 import Greetings from "./Greetings";
 import useInterval from "../hooks/useInterval";
 import Author from "./Author";
-import { FileType, useDragAndDrop } from "../hooks/useDragAndDrop";
+import { useDragAndDrop } from "../hooks/useDragAndDrop";
+
+const HIGH_SPEED = 400;
 
 const FanContainer = styled.header`
   background-color: #282c34;
@@ -16,21 +18,42 @@ const FanContainer = styled.header`
   color: white;
 `;
 
-const FanImgContainer = styled.div<{ isDragging: boolean }>`
+const FanRPMContainer = styled.div<{ speed: number }>`
+  position: fixed;
+  width: 100vw;
+  text-align: center;
+  font-size: 25vw;
+  font-weight: bolder;
+
+  animation: Vibrate 10ms linear infinite;
+  animation-play-state: ${props => props.speed <= HIGH_SPEED ? `running` : `paused`};
+  
+  ${props => props.speed <= HIGH_SPEED && `color: #ff3333`};
+
+  @keyframes Vibrate {
+    0%, 50%, 100% {
+      transform: translate(0, 0);
+    }
+    25% {
+      transform: translate(3px, 0);
+    }
+    75% {
+      transform: translate(-3px, 0);
+    }
+  }
+`;
+
+const FanImgContainer = styled.div<{ isDragging: boolean, speed: number }>`
+  padding: 1rem;
   height: 300px;
   width: 300px;
   display: flex;
-  border-radius: 20px;
+  border-radius: 50%;
   transition: all 1s;
-  ${props => props.isDragging ? `border: 2px solid gray` : `border: 0`}
-`;
+  ${props => props.isDragging ? `border: 2px solid gray` : `border: 0`};
 
-const CustomImg = styled.img<{ speed: number }>`
-  align-content: center;
-  margin: 0 auto;
-  height: inherit;
   @media (prefers-reduced-motion: no-preference) {
-    ${props => `animation: App-logo-spin infinite ${props.speed}ms linear`}
+    ${props => `animation: App-logo-spin infinite ${props.speed > 0.01 ? props.speed : 0.01}ms linear`};
   }
   @keyframes App-logo-spin {
     0% {
@@ -42,25 +65,18 @@ const CustomImg = styled.img<{ speed: number }>`
   }
 `;
 
-const LogoImg = styled.svg<{ speed: number }>`
+const CustomImg = styled.img`
   align-content: center;
-  @media (prefers-reduced-motion: no-preference) {
-    ${props => `animation: App-logo-spin infinite ${props.speed}ms linear`}
-  }
+  margin: 0 auto;
+  height: inherit;
+`;
 
+const LogoImg = styled.svg`
+  align-content: center;
   transition: scale 20s ease-in;
 
   &:hover {
     scale: 160%;
-  }
-
-  @keyframes App-logo-spin {
-    0% {
-      transform: rotate(0deg);
-    }
-    100% {
-      transform: rotate(360deg);
-    }
   }
 
   g {
@@ -94,16 +110,60 @@ const LogoImg = styled.svg<{ speed: number }>`
   }
 `;
 
+const ChangeFanBtn = styled.button<{ direction: string }>`
+  background: transparent;
+  border: 0;
+  border-radius: 50%;
+  color: #282c34;
+  position: fixed;
+  font-size: 1rem;
+  padding: 10px;
+  ${props => props.direction === "next" ? `right: 1rem` : `left: 1rem`};
+  
+  &:hover {
+    cursor: pointer;
+    animation: ShakeHand 1s linear infinite;
+  }
+  
+  @keyframes ShakeHand {
+    0%, 50%, 100% {
+      transform: translate(0, 0);
+    }
+    25% {
+      transform: translate(3px, 0);
+    }
+    75% {
+      transform: translate(-3px, 0);
+    }
+  }
+`;
+
 function Fan() {
+  const Fans = [
+    null,
+    "fanImages/cooler.png",
+    "fanImages/cooler2.png",
+    "fanImages/fan.png",
+    "fanImages/toys.png",
+  ];
+
+  let phase = 50;
+
   const [duration, setDuration] = useState(20000);
   const [isHover, setIsHover] = useState<boolean>(false);
-  const [file, setFile] = useState<FileType | null>(null);
+  const [file, setFile] = useState<string | null>(null);
   const dragRef = useRef<HTMLDivElement | null>(null);
   const imgRef = useRef<any>();
+  const fanIndex = useRef<number>(0);
+  const rpmRef = useRef<number>(3);
 
   useInterval(() => {
     if (isHover) {
-      setDuration(duration - 100 > 200 ? duration - 100 : 200);
+      if (duration > phase) {
+        setDuration(duration - phase);
+      } else {
+        phase /= 10;
+      }
     } else {
       setDuration(duration + 100 < 20000 ? duration + 100 : 20000);
     }
@@ -118,35 +178,56 @@ function Fan() {
     setIsHover(false);
   };
 
-  const onChangeFiles = useCallback((e: ChangeEvent<HTMLInputElement> | any): void => {
-    let selectFile: FileType;
-
-    selectFile = {
-      file: e.dataTransfer.files[0],
-      url: URL.createObjectURL(e.dataTransfer.files[0]),
+  const onClickNextFan = () => {
+    if (fanIndex.current === Fans.length - 1) {
+      fanIndex.current = 0;
+      setFile(null);
+    } else {
+      fanIndex.current += 1;
+      setFile(Fans[fanIndex.current]!);
     }
+  };
+
+  const onClickPrevFan = () => {
+    if (fanIndex.current === 0) {
+      fanIndex.current = Fans.length - 1;
+    } else {
+      fanIndex.current -= 1;
+    }
+    setFile(Fans[fanIndex.current]!);
+  };
+
+  const onChangeFiles = useCallback((e: ChangeEvent<HTMLInputElement> | any): void => {
+    let selectFile: string;
+    selectFile = URL.createObjectURL(e.dataTransfer.files[0]);
 
     setFile(selectFile);
   }, []);
 
   const isDragging = useDragAndDrop(onChangeFiles, dragRef);
-
+  
   useEffect(() => {
-    console.log(isDragging);
-  }, [isDragging]);
+    rpmRef.current = Math.floor(60000 / duration);
+  }, [duration])
 
   return (
     <div className="App">
+      <FanRPMContainer speed={duration}>
+        {rpmRef.current}RPM
+      </FanRPMContainer>
       <FanContainer>
-        <FanImgContainer ref={dragRef} isDragging={isDragging}>
+        <FanImgContainer
+          ref={dragRef}
+          isDragging={isDragging}
+          speed={duration}
+          onMouseOver={onHover}
+          onMouseLeave={onLeave}
+          onTouchStart={onHover}
+          onTouchEnd={onLeave}
+        >
           {
             file === null ?
               <LogoImg
-                speed={duration}
-                onMouseOver={onHover}
-                onMouseLeave={onLeave}
-                onTouchStart={onHover}
-                onTouchEnd={onLeave}
                 ref={imgRef}
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 841.9 595.3">
@@ -158,12 +239,7 @@ function Fan() {
                 </g>
               </LogoImg> :
               <CustomImg
-                src={file.url}
-                speed={duration}
-                onMouseOver={onHover}
-                onMouseLeave={onLeave}
-                onTouchStart={onHover}
-                onTouchEnd={onLeave}
+                src={file}
                 ref={imgRef}
               />
           }
@@ -177,6 +253,8 @@ function Fan() {
         </div>
         <Greetings name="선풍기" />
         <Author />
+        <ChangeFanBtn direction="next" onClick={onClickNextFan}>👉</ChangeFanBtn>
+        <ChangeFanBtn direction="prev" onClick={onClickPrevFan}>👈</ChangeFanBtn>
       </FanContainer>
     </div>
   );

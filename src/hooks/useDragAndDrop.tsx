@@ -1,10 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react";
 
-export interface FileType {
-  file: File,
-  url: string,
-}
-
 // @ts-ignore
 export const useDragAndDrop = (onChange, dragRef) => {
   const [isDragging, setIsDragging] = useState(false);
