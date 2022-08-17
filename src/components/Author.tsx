@@ -15,10 +15,7 @@ const AuthorHeaderContainer = styled.div`
   font-size: 0.5rem;
 `;
 
-const AuthorPatchNoteContainer = styled.div`
-  color: #61dafb;
-  font-size: 0.5rem;
-  
+const AuthorPatchNoteContainer = styled(AuthorHeaderContainer)`
   &:hover {
     cursor: pointer;
     text-decoration: underline white;

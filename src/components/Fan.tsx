@@ -161,11 +161,7 @@ function Fan() {
 
   useInterval(() => {
     if (isHover) {
-      if (duration > phase) {
-        setDuration(duration - phase);
-      } else {
-        phase /= 10;
-      }
+      duration > phase ? setDuration(duration - phase) : phase /= 10;
     } else {
       setDuration(duration + 100 < 20000 ? duration + 100 : 20000);
     }
@@ -191,11 +187,7 @@ function Fan() {
   };
 
   const onClickPrevFan = () => {
-    if (fanIndex.current === 0) {
-      fanIndex.current = Fans.length - 1;
-    } else {
-      fanIndex.current -= 1;
-    }
+    fanIndex.current = (fanIndex.current === 0 ? Fans.length - 1 : fanIndex.current - 1)
     setFile(Fans[fanIndex.current]!);
   };
 
