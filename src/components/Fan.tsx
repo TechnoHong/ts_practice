@@ -4,6 +4,7 @@ import Greetings from "./Greetings";
 import useInterval from "../hooks/useInterval";
 import Author from "./Author";
 import { useDragAndDrop } from "../hooks/useDragAndDrop";
+import Modal from "./Modal";
 
 const HIGH_SPEED = 400;
 
@@ -142,10 +143,10 @@ const ChangeFanBtn = styled.button<{ direction: string }>`
 function Fan() {
   const Fans = [
     null,
-    "fanImages/cooler.png",
-    "fanImages/cooler2.png",
-    "fanImages/fan.png",
-    "fanImages/toys.png",
+    "images/fanImages/cooler.png",
+    "images/fanImages/cooler2.png",
+    "images/fanImages/fan.png",
+    "images/fanImages/toys.png",
   ];
 
   let phase = 50;
@@ -213,6 +214,7 @@ function Fan() {
 
   return (
     <div className="App">
+      <Modal/>
       <FanRPMContainer speed={duration}>
         {rpmRef.current.toFixed()}<span style={{fontSize: "1rem"}}>RPM</span>
       </FanRPMContainer>

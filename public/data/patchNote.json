@@ -1,0 +1,32 @@
+[
+  {
+    "date": "2022-08-17",
+    "title": "v1.1.2",
+    "content": "- 이 팝업 추가",
+    "imgURL": "news.json"
+  },
+  {
+    "date": "2022-08-16",
+    "title": "v1.1.1",
+    "content": "- rpm Text 개선\n- 밑에 DM MouseOver 이벤트 추가",
+    "imgURL": "speed.json"
+  },
+  {
+    "date": "2022-08-16",
+    "title": "v1.1.0",
+    "content": "- 신상 선풍기 구매\n- Drag & Drop 기능 추가\n- 이제 속도 보임",
+    "imgURL": "fanimation.json"
+  },
+  {
+    "date": "2022-08-12",
+    "title": "v1.0.4",
+    "content": "- Drag & Drop 기능 구현",
+    "imgURL": "dnd.json"
+  },
+  {
+    "date": "2022-08-12",
+    "title": "v1.0.3",
+    "content": "- Logo Color Animation 추가\n- Author Component 추가",
+    "imgURL": "rainbow.json"
+  }
+]
