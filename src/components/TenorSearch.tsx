@@ -12,7 +12,7 @@ const GifImage = styled.img`
   
 `;
 
-const TENOR_KEY = "AIzaSyBmhLo5XQDRAhNqJamhRj-MB6zb9GNYavg";
+const TENOR_KEY = process.env.REACT_APP_TENOR_KEY;
 
 const TenorSearch = ({ input, gifMode, setInput, getComments }: { input: string, gifMode: any, setInput: any, getComments: any }) => {
   const [gifs, setGifs] = useState<any[]>([]);

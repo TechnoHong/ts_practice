@@ -2,7 +2,7 @@
   {
     "date": "2022-08-23",
     "title": "v1.2.1",
-    "content": "- 방명록에서 gif파일을 검색해서 전송할 수 있어요.",
+    "content": "- 방명록에서 gif파일 검색해서 전송 ex) $hello",
     "imgURL": "file.json"
   },
   {
