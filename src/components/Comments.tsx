@@ -4,11 +4,13 @@ import styled from "styled-components";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../store/store";
 import { hideComments } from "../store/commentsSlice";
+import TenorSearch from "./TenorSearch";
 
 type comment = {
   "id": number,
-  "body": string,
+  "body"?: string,
   "date": string,
+  "url"?: string,
 }
 
 const CommentsBackgroundContainer = styled.div<{ isShow: boolean }>`
@@ -113,14 +115,20 @@ const HeaderIcon = styled.div`
   &:hover {
     cursor: pointer;
   }
+
   &:active {
     opacity: 0.5;
   }
 `;
 
+const GifImage = styled.img`
+  width: 150px;
+`;
+
 const Comments = () => {
   const [comments, setComments] = useState<comment[]>([]);
   const [input, setInput] = useState("");
+  const [gifMode, setGifMode] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
   const dispatch = useDispatch();
   const visibility = useSelector((state: RootState) => {
@@ -132,7 +140,7 @@ const Comments = () => {
       scrollRef.current.scrollTo(0, scrollRef.current.scrollHeight);
       console.log("to bottom");
     }
-  }
+  };
 
   const getComments = () => {
     axios.get("http://192.168.121.36:4000/api/comments")
@@ -150,6 +158,14 @@ const Comments = () => {
 
   useEffect(scrollToBottom, [comments]);
 
+  useEffect(() => {
+    if (input.startsWith("$")) {
+      setGifMode(true);
+    } else {
+      setGifMode(false);
+    }
+  }, [input]);
+
   const onClose = () => {
     dispatch(hideComments());
   };
@@ -160,7 +176,11 @@ const Comments = () => {
 
   const onSubmit = () => {
     if (input) {
-      axios.post("http://192.168.121.36:4000/api/comments", { "body": input, "date": new Date().toLocaleString() })
+      axios.post("http://192.168.121.36:4000/api/comments", {
+        "body": input,
+        "date": new Date().toLocaleString(),
+        "url": null,
+      })
         .then(() => {
           setInput("");
           getComments();
@@ -169,16 +189,16 @@ const Comments = () => {
   };
 
   const onKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter') {
+    if (e.key === "Enter") {
       onSubmit();
     }
-  }
+  };
 
   return (
     <CommentsBackgroundContainer isShow={visibility} onClick={onClose}>
       <ContentsContainer onClick={e => e.stopPropagation()}>
         <HeaderContainer>
-          <HeaderIcon  onClick={getComments}>♻️</HeaderIcon>
+          <HeaderIcon onClick={getComments}>♻️</HeaderIcon>
           <div>방명록</div>
           <HeaderIcon onClick={onClose}>❌</HeaderIcon>
         </HeaderContainer>
@@ -186,9 +206,16 @@ const Comments = () => {
           {comments &&
             comments.map((cmt, index) => (
               <CommentItemContainer key={index}>
-                <CommentBody>
-                  {cmt.body}
-                </CommentBody>
+                {
+                  cmt.url &&
+                  <GifImage src={cmt.url}/>
+                }
+                {
+                  cmt.body &&
+                  <CommentBody>
+                    {cmt.body}
+                  </CommentBody>
+                }
                 <CommentDate>
                   {cmt.date}
                 </CommentDate>
@@ -196,8 +223,12 @@ const Comments = () => {
             ))
           }
         </CommentsContainer>
+        {
+          gifMode &&
+          <TenorSearch gifMode={setGifMode} input={input.slice(1)} setInput={setInput} getComments={getComments}/>
+        }
         <InputContainer>
-          <InputInput placeholder="멋져요" onChange={handleChange} value={input} onKeyDown={onKeyPress}/>
+          <InputInput placeholder="$로 시작해서 gif를 보내보세요." onChange={handleChange} value={input} onKeyDown={onKeyPress} />
           <SubmitButton onClick={onSubmit}>등록</SubmitButton>
         </InputContainer>
       </ContentsContainer>

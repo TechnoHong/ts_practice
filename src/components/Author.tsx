@@ -48,7 +48,7 @@ const Author = () => {
         @Hong
       </AuthorHeaderContainer>
       <AuthorPatchNoteContainer onClick={onClick}>
-        v1.2.0 패치노트
+        v1.2.1 패치노트
       </AuthorPatchNoteContainer>
       <AuthorSubContainer>
         피드백은 <span style={{color: "#61dafb"}} onMouseOver={onHover} onMouseLeave={onLeave}>{dm}</span> 부탁드려요🙏

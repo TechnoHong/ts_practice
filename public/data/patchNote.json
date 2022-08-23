@@ -1,6 +1,12 @@
 [
   {
     "date": "2022-08-23",
+    "title": "v1.2.1",
+    "content": "- 방명록에서 gif파일을 검색해서 전송할 수 있어요.",
+    "imgURL": "file.json"
+  },
+  {
+    "date": "2022-08-23",
     "title": "v1.2.0",
     "content": "- 방명록 추가\n- Mongo DB 연동",
     "imgURL": "chat.json"
