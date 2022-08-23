@@ -1,5 +1,11 @@
 [
   {
+    "date": "2022-08-23",
+    "title": "v1.2.0",
+    "content": "- 방명록 추가\n- Mongo DB 연동",
+    "imgURL": "chat.json"
+  },
+  {
     "date": "2022-08-17",
     "title": "v1.1.2",
     "content": "- 이 팝업 추가",
