@@ -1,5 +1,11 @@
 [
   {
+    "date": "2022-08-25",
+    "title": "v1.2.2",
+    "content": "- 움짤보내기 카테고리 추가\n- 방명록 Error 예외처리\n- Autumn Edition 적용",
+    "imgURL": "dance.json"
+  },
+  {
     "date": "2022-08-23",
     "title": "v1.2.1",
     "content": "- 방명록에서 gif파일 검색해서 전송 ex) $hello",

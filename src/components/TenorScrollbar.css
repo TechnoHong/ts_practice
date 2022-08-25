@@ -1,0 +1,12 @@
+.react-horizontal-scrolling-menu--scroll-container::-webkit-scrollbar {
+    height: 6px;
+}
+
+.react-horizontal-scrolling-menu--scroll-container::-webkit-scrollbar-thumb {
+    background: #217af4;
+    border-radius: 10px;
+}
+
+.react-horizontal-scrolling-menu--scroll-container::-webkit-scrollbar-track {
+    background: transparent;
+}

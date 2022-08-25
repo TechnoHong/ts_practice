@@ -56,7 +56,6 @@ const CommentsContainer = styled.div`
   align-items: start;
   overflow-y: scroll;
 
-
   &::-webkit-scrollbar {
     width: 8px;
   }
@@ -125,10 +124,20 @@ const GifImage = styled.img`
   width: 150px;
 `;
 
+const ErrorContainer = styled.div`
+  margin: auto;
+  white-space: pre-wrap;
+  text-align: center;
+  color: white;
+  font-weight: 800;
+  font-size: 3rem;
+`;
+
 const Comments = () => {
   const [comments, setComments] = useState<comment[]>([]);
   const [input, setInput] = useState("");
   const [gifMode, setGifMode] = useState(false);
+  const [error, setError] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
   const dispatch = useDispatch();
   const visibility = useSelector((state: RootState) => {
@@ -146,6 +155,10 @@ const Comments = () => {
     axios.get("http://192.168.121.36:4000/api/comments")
       .then((response) => {
         setComments(response.data);
+        setError(false);
+      })
+      .catch(() => {
+        setError(true);
       });
   };
 
@@ -203,12 +216,12 @@ const Comments = () => {
           <HeaderIcon onClick={onClose}>❌</HeaderIcon>
         </HeaderContainer>
         <CommentsContainer ref={scrollRef}>
-          {comments &&
+          {(comments && !error) &&
             comments.map((cmt, index) => (
               <CommentItemContainer key={index}>
                 {
                   cmt.url &&
-                  <GifImage src={cmt.url}/>
+                  <GifImage src={cmt.url} />
                 }
                 {
                   cmt.body &&
@@ -222,13 +235,18 @@ const Comments = () => {
               </CommentItemContainer>
             ))
           }
+          {
+            error &&
+            <ErrorContainer>{"🤔\nError"}</ErrorContainer>
+          }
         </CommentsContainer>
         {
           gifMode &&
-          <TenorSearch gifMode={setGifMode} input={input.slice(1)} setInput={setInput} getComments={getComments}/>
+          // (gifMode && !error) &&
+          <TenorSearch gifMode={setGifMode} input={input.slice(1)} setInput={setInput} getComments={getComments} />
         }
         <InputContainer>
-          <InputInput placeholder="$로 시작해서 gif를 보내보세요." onChange={handleChange} value={input} onKeyDown={onKeyPress} />
+          <InputInput placeholder="$로 시작해서 gif를 보내보세요" onChange={handleChange} value={input} onKeyDown={onKeyPress} />
           <SubmitButton onClick={onSubmit}>등록</SubmitButton>
         </InputContainer>
       </ContentsContainer>
