@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../store/store";
-import { hideModal } from "../store/modalSlice";
+import { hideModal, showModal } from "../store/modalSlice";
 import axios from "axios";
 import PatchNoteItem, { PatchItem } from "./PatchNoteItem";
 
@@ -50,7 +50,7 @@ const ModalContent = styled.div`
 
 const ModalFooter = styled.div`
   display: flex;
-  justify-content: right;
+  justify-content: space-between;
   align-content: baseline;
 `;
 
@@ -72,15 +72,33 @@ const Modal = () => {
     return state.modal.value;
   });
 
+  const current = new Date();
+  const HAS_VISITED_BEFORE = localStorage.getItem("hasVisitedBefore");
+
   const onClose = () => {
     dispatch(hideModal());
   };
+
+  const onCloseOneDay = () => {
+    const expires = current.setHours(current.getHours() + 24);
+    localStorage.setItem("hasVisitedBefore", expires.toString());
+    onClose();
+  };
+
+  useEffect(() => {
+    if (HAS_VISITED_BEFORE && new Date(HAS_VISITED_BEFORE) > current) {
+      return;
+    }
+    if (!HAS_VISITED_BEFORE) {
+      dispatch(showModal());
+    }
+  }, [HAS_VISITED_BEFORE]);
 
   useEffect(() => {
     axios.get("/data/patchNote.json")
       .then((response) => {
         setPatchNotes(response.data);
-      })
+      });
   }, []);
 
   return (
@@ -93,12 +111,15 @@ const Modal = () => {
           {
             patchNotes ?
               patchNotes.map((value, index) => (
-                <PatchNoteItem key={index} item={value}/>
+                <PatchNoteItem key={index} item={value} />
               ))
               : null
           }
         </ModalContent>
         <ModalFooter>
+          <ModalButton onClick={onCloseOneDay}>
+            오늘 하루 팝업 닫기
+          </ModalButton>
           <ModalButton onClick={onClose}>
             닫기
           </ModalButton>

@@ -5,7 +5,7 @@ type InitialState = {
 };
 
 const initialState: InitialState = {
-  value: true,
+  value: false,
 };
 
 const modalSlice = createSlice({

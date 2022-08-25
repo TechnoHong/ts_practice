@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../store/store";
 import { hideComments } from "../store/commentsSlice";
 import TenorSearch from "./TenorSearch";
+import useInterval from "../hooks/useInterval";
 
 type comment = {
   "id": number,
@@ -121,10 +122,10 @@ const HeaderIcon = styled.div`
 `;
 
 const GifImage = styled.img`
-  width: 150px;
+  height: 150px;
 `;
 
-const ErrorContainer = styled.div`
+const NoticeContainer = styled.div`
   margin: auto;
   white-space: pre-wrap;
   text-align: center;
@@ -138,11 +139,22 @@ const Comments = () => {
   const [input, setInput] = useState("");
   const [gifMode, setGifMode] = useState(false);
   const [error, setError] = useState(false);
+  const [count, setCount] = useState(5);
   const scrollRef = useRef<HTMLDivElement>(null);
   const dispatch = useDispatch();
   const visibility = useSelector((state: RootState) => {
     return state.comments.value;
   });
+
+  useInterval(() => {
+    if (count === 0) {
+      setCount(5);
+      console.log("refresh");
+      getComments();
+    } else {
+      setCount(count - 1);
+    }
+  }, 1000);
 
   const scrollToBottom = () => {
     if (scrollRef.current) {
@@ -211,7 +223,7 @@ const Comments = () => {
     <CommentsBackgroundContainer isShow={visibility} onClick={onClose}>
       <ContentsContainer onClick={e => e.stopPropagation()}>
         <HeaderContainer>
-          <HeaderIcon onClick={getComments}>♻️</HeaderIcon>
+          <HeaderIcon onClick={getComments}>♻️<span style={{ fontSize: "0.75rem" }}>{count}</span></HeaderIcon>
           <div>방명록</div>
           <HeaderIcon onClick={onClose}>❌</HeaderIcon>
         </HeaderContainer>
@@ -237,12 +249,15 @@ const Comments = () => {
           }
           {
             error &&
-            <ErrorContainer>{"🤔\nError"}</ErrorContainer>
+            <NoticeContainer>{"🤔\nError"}</NoticeContainer>
+          }
+          {
+            comments.length === 0 &&
+            <NoticeContainer>{"💁‍♂️\nHello!"}</NoticeContainer>
           }
         </CommentsContainer>
         {
-          gifMode &&
-          // (gifMode && !error) &&
+          (gifMode && !error) &&
           <TenorSearch gifMode={setGifMode} input={input.slice(1)} setInput={setInput} getComments={getComments} />
         }
         <InputContainer>
