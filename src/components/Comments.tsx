@@ -36,7 +36,6 @@ const CommentsBackgroundContainer = styled.div<{ isShow: boolean }>`
 
 const HeaderContainer = styled.div`
   display: flex;
-  justify-content: space-between;
   padding: 0.5rem;
   color: white;
 `;
@@ -112,6 +111,7 @@ const SubmitButton = styled.button`
 `;
 
 const HeaderIcon = styled.div`
+  flex: 1 1 0;
   &:hover {
     cursor: pointer;
   }
@@ -119,6 +119,11 @@ const HeaderIcon = styled.div`
   &:active {
     opacity: 0.5;
   }
+`;
+
+const HeaderTitle = styled.div`
+  flex: 2 1 0;
+  text-align: center;
 `;
 
 const GifImage = styled.img`
@@ -148,9 +153,8 @@ const Comments = () => {
 
   useInterval(() => {
     if (count === 0) {
-      setCount(5);
-      console.log("refresh");
       getComments();
+      console.log("refresh");
     } else {
       setCount(count - 1);
     }
@@ -164,6 +168,7 @@ const Comments = () => {
   };
 
   const getComments = () => {
+    setCount(5);
     axios.get("http://192.168.121.36:4000/api/comments")
       .then((response) => {
         setComments(response.data);
@@ -223,9 +228,9 @@ const Comments = () => {
     <CommentsBackgroundContainer isShow={visibility} onClick={onClose}>
       <ContentsContainer onClick={e => e.stopPropagation()}>
         <HeaderContainer>
-          <HeaderIcon onClick={getComments}>♻️<span style={{ fontSize: "0.75rem" }}>{count}</span></HeaderIcon>
-          <div>방명록</div>
-          <HeaderIcon onClick={onClose}>❌</HeaderIcon>
+          <HeaderIcon onClick={getComments}>♻️<span style={{ fontSize: "0.75rem" }}> {count}초 뒤 새로고침..</span></HeaderIcon>
+          <HeaderTitle>방명록</HeaderTitle>
+          <HeaderIcon style={{ textAlign: "right" }} onClick={onClose}>❌</HeaderIcon>
         </HeaderContainer>
         <CommentsContainer ref={scrollRef}>
           {(comments && !error) &&
@@ -252,7 +257,7 @@ const Comments = () => {
             <NoticeContainer>{"🤔\nError"}</NoticeContainer>
           }
           {
-            comments.length === 0 &&
+            (!error && comments.length === 0) &&
             <NoticeContainer>{"💁‍♂️\nHello!"}</NoticeContainer>
           }
         </CommentsContainer>
