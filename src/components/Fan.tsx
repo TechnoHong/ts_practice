@@ -4,8 +4,7 @@ import Greetings from "./Greetings";
 import useInterval from "../hooks/useInterval";
 import Author from "./Author";
 import { useDragAndDrop } from "../hooks/useDragAndDrop";
-import { useDispatch } from "react-redux";
-import { showComments } from "../store/commentsSlice";
+import Menus from "./Menus";
 
 const HIGH_SPEED = 400;
 
@@ -141,20 +140,6 @@ const ChangeFanBtn = styled.button<{ direction: string }>`
   }
 `;
 
-const CommentsButton = styled.button`
-  position: absolute;
-  bottom: 5px;
-  left: 5px;
-  background: transparent;
-  padding: 5px;
-  font-size: 2rem;
-  border: 0;
-  
-  &:hover {
-    cursor: pointer;
-  }
-`;
-
 function Fan() {
   const Fans = [
     null,
@@ -173,7 +158,6 @@ function Fan() {
   const imgRef = useRef<any>();
   const fanIndex = useRef<number>(0);
   const rpmRef = useRef<number>(3);
-  const dispatch = useDispatch();
 
   useInterval(() => {
     if (isHover) {
@@ -220,9 +204,10 @@ function Fan() {
     rpmRef.current = Math.floor(60000 / duration);
   }, [duration])
 
+
   return (
     <div className="App">
-      <CommentsButton onClick={() => dispatch(showComments())}>🎍</CommentsButton>
+      <Menus/>
       <FanRPMContainer speed={duration}>
         {rpmRef.current.toFixed()}<span style={{fontSize: "1rem"}}>RPM</span>
       </FanRPMContainer>
