@@ -1,5 +1,11 @@
 [
   {
+    "date": "2022-08-31",
+    "title": "v1.3.1",
+    "content": "- WORDLE 자랑하기 기능 추가\n- 이제 wordle의 도전 횟수가 제한됩니다\n- WORDLE 커서 추가\n- favicon, app name 수정",
+    "imgURL": "snooped.json"
+  },
+  {
     "date": "2022-08-30",
     "title": "v1.3.0",
     "content": "- WORDLE 기능 추가\n- 방명록 interval logic 수정\n- tooltip 추가\n- gif 카테고리 호동 추가",

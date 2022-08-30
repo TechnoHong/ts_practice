@@ -12,6 +12,7 @@ type comment = {
   "body"?: string,
   "date": string,
   "url"?: string,
+  "type": string,
 }
 
 const CommentsBackgroundContainer = styled.div<{ isShow: boolean }>`
@@ -75,9 +76,10 @@ const CommentItemContainer = styled.div`
   margin: 0 1rem 1rem 1rem;
 `;
 
-const CommentBody = styled.div`
+const CommentBody = styled.div<{ type: string }>`
   padding: 0.5rem;
-  background: #52565c;
+  background: ${props => props.type === "wordleNotice" ? "#F0AD4E" : "#52565c"};
+  font-size: ${props => props.type === "wordleNotice" ? "0.75rem" : "1rem"};
   border-radius: 3px;
   color: white;
 `;
@@ -210,6 +212,7 @@ const Comments = () => {
         "body": input,
         "date": new Date().toLocaleString(),
         "url": null,
+        "type": "chat",
       })
         .then(() => {
           setInput("");
@@ -242,7 +245,7 @@ const Comments = () => {
                 }
                 {
                   cmt.body &&
-                  <CommentBody>
+                  <CommentBody type={cmt.type ? cmt.type : ""}>
                     {cmt.body}
                   </CommentBody>
                 }
