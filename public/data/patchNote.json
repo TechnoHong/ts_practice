@@ -1,5 +1,11 @@
 [
   {
+    "date": "2022-08-30",
+    "title": "v1.3.0",
+    "content": "- WORDLE 기능 추가\n- 방명록 interval logic 수정\n- tooltip 추가\n- gif 카테고리 호동 추가",
+    "imgURL": "puzzle.json"
+  },
+  {
     "date": "2022-08-25",
     "title": "v1.2.2",
     "content": "- 움짤보내기 카테고리 추가\n- 방명록 Error 예외처리\n- Autumn Edition 적용",

@@ -158,7 +158,7 @@ const Comments = () => {
     } else {
       setCount(count - 1);
     }
-  }, 1000);
+  }, visibility ? 1000 : null);
 
   const scrollToBottom = () => {
     if (scrollRef.current) {

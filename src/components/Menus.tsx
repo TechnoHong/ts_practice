@@ -38,7 +38,7 @@ const Menus = () => {
       </ReactTooltip>
       <button data-tip data-for="wordle" onClick={() => dispatch(showWordle())}>🔑</button>
       <ReactTooltip id="wordle" effect="solid">
-        <TooltipText>개발중..</TooltipText>
+        <TooltipText>WORDLE</TooltipText>
       </ReactTooltip>
     </ButtonsContainer>
   );

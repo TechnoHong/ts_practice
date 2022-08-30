@@ -84,6 +84,7 @@ const TenorSearch = ({
         <TenorCategoryButton onClick={() => onClickCategory("cool")}>😎 멋져요</TenorCategoryButton>
         <TenorCategoryButton onClick={() => onClickCategory("hiphop")}>✌️ 힙합</TenorCategoryButton>
         <TenorCategoryButton onClick={() => onClickCategory("pepe")}>🐸 개구리</TenorCategoryButton>
+        <TenorCategoryButton onClick={() => onClickCategory("호동")}>🐷 호동</TenorCategoryButton>
         <TenorCategoryButton onClick={() => onClickCategory("Patrick")}>🍦 뚱이</TenorCategoryButton>
         <TenorCategoryButton onClick={() => onClickCategory("SpongeBob")}>🧽️ 스펀지밥</TenorCategoryButton>
         <TenorCategoryButton onClick={() => onClickCategory("leave")}>🏡 퇴근</TenorCategoryButton>
