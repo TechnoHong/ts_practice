@@ -1,6 +1,12 @@
 [
   {
     "date": "2022-08-31",
+    "title": "v1.3.3",
+    "content": "- Wordle 내 전적 확인 가능\n- 버그 수정\n- todo: 자랑하기 기능 개선",
+    "imgURL": "stat.json"
+  },
+  {
+    "date": "2022-08-31",
     "title": "v1.3.1",
     "content": "- WORDLE 자랑하기 기능 추가\n- 이제 wordle의 도전 횟수가 제한됩니다\n- WORDLE 커서 추가\n- favicon, app name 수정",
     "imgURL": "snooped.json"

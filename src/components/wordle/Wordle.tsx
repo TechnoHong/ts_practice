@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../store/store";
 import { hideWordle } from "../../store/wordleSlice";
 import ReactTooltip from "react-tooltip";
-import WordleDescription from "./WordleDescription";
+import WordleDescription, { WordleHistory } from "./WordleDescription";
 
 const OWLBOT_KEY = process.env.REACT_APP_OWLBOT_KEY;
 const WORDLE_KEY: string = process.env.REACT_APP_TODAY_WORDLE_KEY!;
@@ -151,6 +151,7 @@ const Wordle = () => {
         setDesc(localValue.state);
       } else {
         localStorage.removeItem("wordle_info");
+        historyCheck();
         initialWordle();
       }
     } else {
@@ -176,6 +177,14 @@ const Wordle = () => {
     return today === lastPlayDay;
   };
 
+  const historyCheck = () => {
+    if (localStorage.getItem("wordle_history")) {
+      const history: WordleHistory = JSON.parse(localStorage.getItem("wordle_history")!);
+      history.checkToday = false;
+      localStorage.setItem("wordle_history", JSON.stringify(history));
+    }
+  }
+
   const isValidWord = (word: string) => {
     axios.get("https://still-castle-98164.herokuapp.com/https://owlbot.info/api/v4/dictionary/" + word, {
       headers: {
@@ -184,13 +193,16 @@ const Wordle = () => {
     })
       .then(() => {
         setDesc(() => "");
-        checkWord(word);
-        if (cursorPos[0] === matrix.length - 1) { // 실패
-          setDesc(() => "FAILED");
-        } else {
-          setCursorPos([cursorPos[0] + 1, 0]);
-          matrix[cursorPos[0] + 1][0].isCursor = true;
-        }
+        checkWord(word).then(isCorrect => {
+          if (!isCorrect) {
+            if (cursorPos[0] === matrix.length - 1) { // 실패
+              setDesc(() => "FAILED");
+            } else {
+              setCursorPos([cursorPos[0] + 1, 0]);
+              matrix[cursorPos[0] + 1][0].isCursor = true;
+            }
+          }
+        });
       })
       .catch(e => {
         if (e.response && e.response.status === 404) {
@@ -201,7 +213,7 @@ const Wordle = () => {
       });
   };
 
-  const checkWord = (word: string) => {
+  const checkWord = async (word: string) => {
     matrix[cursorPos[0]].map((w, idx) => {
       if (WORDLE_KEY.at(idx) === w.word) {
         w.state = "Strike";
@@ -209,7 +221,7 @@ const Wordle = () => {
         w.state = "Ball";
       }
     });
-    isCorrect(word);
+    return isCorrect(word);
   };
 
   const lineLoop = () => {
@@ -249,16 +261,13 @@ const Wordle = () => {
   };
 
   useEffect(() => {
-    if (desc === "CORRECT") {
-      matrix[cursorPos[0]][cursorPos[1]].isCursor = false;
-    }
     saveLocalStorage();
   }, [desc, cursorPos])
 
   const saveLocalStorage = () => {
     const saveValue: LocalStorageValue = {
       matrix: [...matrix],
-      cursor: [cursorPos[0], 0],
+      cursor: [cursorPos[0], cursorPos[1]],
       state: desc,
       timestamp: new Date(),
     };
@@ -327,7 +336,7 @@ const Wordle = () => {
         <WordleMainContent>
           {lineLoop()}
         </WordleMainContent>
-        <WordleDescription desc={desc} tryCount={cursorPos[0]} />
+        <WordleDescription desc={desc} tryCount={cursorPos[0] + 1} />
       </WordleContentContainer>
     </WordleBackgroundContainer>
   );
