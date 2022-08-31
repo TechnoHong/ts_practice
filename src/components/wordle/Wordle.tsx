@@ -5,14 +5,24 @@ import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../store/store";
 import { hideWordle } from "../../store/wordleSlice";
 import ReactTooltip from "react-tooltip";
+import WordleDescription from "./WordleDescription";
 
 const OWLBOT_KEY = process.env.REACT_APP_OWLBOT_KEY;
 const WORDLE_KEY: string = process.env.REACT_APP_TODAY_WORDLE_KEY!;
 
+interface LocalStorageValue {
+  matrix: lineType[],
+  cursor: number[],
+  state: string,
+  timestamp: Date,
+}
+
 interface wordType {
   word: string,
   state: WordStateType,
+  isCursor: boolean,
 }
+
 type WordStateType = "Nothing" | "Filled" | "Ball" | "Strike";
 type lineType = wordType[];
 
@@ -41,13 +51,13 @@ const WordleTitleContainer = styled.div`
   justify-content: space-between;
   align-items: baseline;
   margin-bottom: 1rem;
-  
+
   .title {
     font-size: 2rem;
     font-weight: 800;
     color: #C9CACC;
   }
-  
+
   .guide {
     font-weight: 600;
     text-decoration: underline;
@@ -90,7 +100,7 @@ const handlerColorType = (state: WordStateType) => {
   }
 };
 
-const WordleAlphabetContainer = styled.span<{ wordState: WordStateType }>`
+const WordleAlphabetContainer = styled.span<{ wordState: WordStateType, isCursor: boolean }>`
   display: inline-block;
   font-size: 3rem;
   font-weight: 600;
@@ -102,6 +112,7 @@ const WordleAlphabetContainer = styled.span<{ wordState: WordStateType }>`
   line-height: 80px;
   border: #43464D 3px solid;
   border-radius: 5px;
+  ${props => props.isCursor && "border-bottom: white 3px solid"};
   background-color: ${props => handlerColorType(props.wordState)};
   transition: background-color 500ms linear;
 
@@ -110,57 +121,16 @@ const WordleAlphabetContainer = styled.span<{ wordState: WordStateType }>`
   }
 `;
 
-const WordleDescriptionContainer = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 50px;
-  margin-top: 2rem;
-`;
-
-const WordleInvalidContainer = styled.div`
-  font-size: 1rem;
-  font-weight: 600;
-  color: #E84664;
-  animation: fadeout 5s forwards;
-
-  @keyframes fadeout {
-    from {
-      opacity: 1;
-    }
-    to {
-      opacity: 0;
-    }
-  }
-`;
-
-const WordleCorrectContainer = styled.div`
-  font-size: 2rem;
-  font-weight: 600;
-  color: #97E846;
-`;
-
-const WordleFailContainer = styled.div`
-  font-size: 2rem;
-  font-weight: 600;
-  color: #e83b3b;
-`;
-
-const WordleValidationContainer = styled.div`
-  font-size: 1rem;
-  font-weight: 400;
-  color: #e0d4a3;
-`;
-
 const Wordle = () => {
   const initWord: wordType = {
     word: "",
     state: "Nothing",
+    isCursor: false,
   };
   const initLine: lineType = [];
   const initMatrix: lineType[] = [];
 
-  useEffect(() => {
+  const initialWordle = () => {
     for (let i = 0; i < WORDLE_KEY.length; i++) {
       const copyLine = [...initLine];
       for (let j = 0; j < WORDLE_KEY.length; j++) {
@@ -168,6 +138,23 @@ const Wordle = () => {
         copyLine.push(copyWord);
       }
       initMatrix.push(copyLine);
+    }
+    matrix[0][0].isCursor = true;
+  };
+
+  useEffect(() => {
+    if (localStorage.getItem("wordle_info")) {
+      const localValue: LocalStorageValue = JSON.parse(localStorage.getItem("wordle_info")!);
+      if (checkPlayDate(localValue.timestamp)) {
+        setMatrix(localValue.matrix);
+        setCursorPos(localValue.cursor);
+        setDesc(localValue.state);
+      } else {
+        localStorage.removeItem("wordle_info");
+        initialWordle();
+      }
+    } else {
+      initialWordle();
     }
   }, []);
 
@@ -183,6 +170,12 @@ const Wordle = () => {
     dispatch(hideWordle());
   };
 
+  const checkPlayDate = (savedTime: Date) => {
+    const today = new Date().getDate();
+    const lastPlayDay = new Date(savedTime).getDate();
+    return today === lastPlayDay;
+  };
+
   const isValidWord = (word: string) => {
     axios.get("https://still-castle-98164.herokuapp.com/https://owlbot.info/api/v4/dictionary/" + word, {
       headers: {
@@ -190,17 +183,18 @@ const Wordle = () => {
       },
     })
       .then(() => {
-        setDesc("");
+        setDesc(() => "");
         checkWord(word);
         if (cursorPos[0] === matrix.length - 1) { // 실패
-          setDesc("FAILED");
+          setDesc(() => "FAILED");
         } else {
           setCursorPos([cursorPos[0] + 1, 0]);
+          matrix[cursorPos[0] + 1][0].isCursor = true;
         }
       })
       .catch(e => {
         if (e.response && e.response.status === 404) {
-          setDesc("INVALID");
+          setDesc(() => "INVALID");
         } else {
           console.log("unexpected Error");
         }
@@ -230,7 +224,8 @@ const Wordle = () => {
     const wordArr = [];
     for (let i = 0; i < matrix[line].length; i++) {
       wordArr.push(<WordleAlphabetContainer key={i}
-                                            wordState={matrix[line][i].state}>
+                                            wordState={matrix[line][i].state}
+                                            isCursor={matrix[line][i].isCursor}>
         {matrix[line][i].word}
       </WordleAlphabetContainer>);
     }
@@ -245,7 +240,7 @@ const Wordle = () => {
 
   const isCorrect = (word: string): boolean => {
     if (word === WORDLE_KEY) {
-      setDesc("CORRECT");
+      setDesc(() => "CORRECT");
       return true;
     } else {
       console.log("WRONG");
@@ -253,13 +248,30 @@ const Wordle = () => {
     }
   };
 
+  useEffect(() => {
+    if (desc === "CORRECT") {
+      matrix[cursorPos[0]][cursorPos[1]].isCursor = false;
+    }
+    saveLocalStorage();
+  }, [desc, cursorPos])
+
+  const saveLocalStorage = () => {
+    const saveValue: LocalStorageValue = {
+      matrix: [...matrix],
+      cursor: [cursorPos[0], 0],
+      state: desc,
+      timestamp: new Date(),
+    };
+    localStorage.setItem("wordle_info", JSON.stringify(saveValue));
+  };
+
   const onKeyPress = (e: React.KeyboardEvent) => {
     const expression = /^[a-zA-Z]*$/;
 
-    if (desc === "FAILED") return;
+    if (desc === "FAILED" || desc === "CORRECT") return;
 
     if (e.key === "Enter" && cursorPos[1] === matrix[0].length && desc !== "VERIFICATION") { // 엔터입력 정답제출
-      setDesc("VERIFICATION");
+      setDesc(() => "VERIFICATION");
       const lineWord = getLineWord(matrix[cursorPos[0]]);
       isValidWord(lineWord); // 단어 유효성 확인
       return;
@@ -267,8 +279,12 @@ const Wordle = () => {
 
     if (e.key === "Backspace" && cursorPos[1] !== 0) { // 지우기
       const copyArr = [...matrix];
+      if (cursorPos[1] !== matrix[0].length) {
+        copyArr[cursorPos[0]][cursorPos[1]].isCursor = false;
+      }
       copyArr[cursorPos[0]][cursorPos[1] - 1].word = "";
       copyArr[cursorPos[0]][cursorPos[1] - 1].state = "Nothing";
+      copyArr[cursorPos[0]][cursorPos[1] - 1].isCursor = true;
       setCursorPos([cursorPos[0], cursorPos[1] - 1]);
       setMatrix(copyArr);
       return;
@@ -279,9 +295,14 @@ const Wordle = () => {
       return;
     } else { // 한줄 입력
       const copyArr = [...matrix];
+      copyArr[cursorPos[0]][cursorPos[1]].isCursor = false;
       copyArr[cursorPos[0]][cursorPos[1]].word = e.key.toUpperCase();
       copyArr[cursorPos[0]][cursorPos[1]].state = "Filled";
       setCursorPos([cursorPos[0], cursorPos[1] + 1]);
+
+      if (cursorPos[1] !== matrix[0].length - 1) {
+        copyArr[cursorPos[0]][cursorPos[1] + 1].isCursor = true;
+      }
       setMatrix(copyArr);
       return;
     }
@@ -297,41 +318,16 @@ const Wordle = () => {
             <div>⚾️ 영어 단어 맞추기 게임</div>
             <div>⚾️ 각 시행마다 온전한 n글자 단어를 제출 [Enter]</div>
             <div>⚾️ 정답 단어는 24시간마다 갱신</div>
-            <div style={{ color: "#4679e8"}}>파란색: 알파펫 종류와 위치가 모두 일치 🎯</div>
-            <div style={{ color: "#E8E346"}}>노란색: 위치만 불일치</div>
-            <div style={{ color: "#C9CACC"}}>회색: 정답 단어에 없는 알파벳</div>
-            <div style={{ fontSize: "0.25rem", textAlign: "right"}}>[출처] https://ko.wikipedia.org/wiki/워들</div>
+            <div style={{ color: "#4679e8" }}>파란색: 알파벳 종류와 위치가 모두 일치 🎯</div>
+            <div style={{ color: "#E8E346" }}>노란색: 위치만 불일치</div>
+            <div style={{ color: "#C9CACC" }}>회색: 정답 단어에 없는 알파벳</div>
+            <div style={{ fontSize: "0.25rem", textAlign: "right" }}>[출처] https://ko.wikipedia.org/wiki/워들</div>
           </ReactTooltip>
         </WordleTitleContainer>
         <WordleMainContent>
           {lineLoop()}
         </WordleMainContent>
-        <WordleDescriptionContainer>
-          {
-            desc === "INVALID" &&
-            <WordleInvalidContainer>
-              정확한 단어를 입력하세요
-            </WordleInvalidContainer>
-          }
-          {
-            desc === "CORRECT" &&
-            <WordleCorrectContainer>
-              {cursorPos[0]} 번 만에 정답!
-            </WordleCorrectContainer>
-          }
-          {
-            desc === "VERIFICATION" &&
-            <WordleValidationContainer>
-              검증 중..
-            </WordleValidationContainer>
-          }
-          {
-            desc === "FAILED" &&
-            <WordleFailContainer>
-              실패..
-            </WordleFailContainer>
-          }
-        </WordleDescriptionContainer>
+        <WordleDescription desc={desc} tryCount={cursorPos[0]} />
       </WordleContentContainer>
     </WordleBackgroundContainer>
   );
