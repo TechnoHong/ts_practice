@@ -24,7 +24,7 @@ interface wordType {
 }
 
 type WordStateType = "Nothing" | "Filled" | "Ball" | "Strike";
-type lineType = wordType[];
+export type lineType = wordType[];
 
 const WordleBackgroundContainer = styled.div<{ isShow: boolean }>`
   position: fixed;
@@ -181,6 +181,7 @@ const Wordle = () => {
     if (localStorage.getItem("wordle_history")) {
       const history: WordleHistory = JSON.parse(localStorage.getItem("wordle_history")!);
       history.checkToday = false;
+      history.swagToday = false;
       localStorage.setItem("wordle_history", JSON.stringify(history));
     }
   }
@@ -336,7 +337,7 @@ const Wordle = () => {
         <WordleMainContent>
           {lineLoop()}
         </WordleMainContent>
-        <WordleDescription desc={desc} tryCount={cursorPos[0] + 1} />
+        <WordleDescription desc={desc} tryCount={cursorPos[0] + 1} matrix={matrix} />
       </WordleContentContainer>
     </WordleBackgroundContainer>
   );

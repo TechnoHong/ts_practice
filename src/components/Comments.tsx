@@ -82,6 +82,7 @@ const CommentBody = styled.div<{ type: string }>`
   font-size: ${props => props.type === "wordleNotice" ? "0.75rem" : "1rem"};
   border-radius: 3px;
   color: white;
+  white-space: pre-wrap;
 `;
 
 const CommentDate = styled.div`

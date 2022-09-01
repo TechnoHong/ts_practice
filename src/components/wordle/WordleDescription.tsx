@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import axios from "axios";
 import ReactTooltip from "react-tooltip";
+import { lineType } from "./Wordle";
 
 const WordleDescriptionContainer = styled.div`
   display: flex;
@@ -67,6 +68,12 @@ const WordleSwagButton = styled.button<{ swag: boolean }>`
   &:active {
     color: #222222;
     background: #C9CACC;
+  }
+  
+  &:disabled {
+    color: #C9CACC;
+    background: #222222;
+    cursor: default;
   }
 
   @keyframes jittery {
@@ -154,17 +161,20 @@ const handlerColorType = (state: number) => {
 type WordleProps = {
   desc: string,
   tryCount: number,
+  matrix: lineType[],
 }
 
 export interface WordleHistory {
   history: number[],
   checkToday: boolean,
+  swagToday: boolean,
 }
 
-const WordleDescription = ({ desc, tryCount }: WordleProps) => {
+const WordleDescription = ({ desc, tryCount, matrix }: WordleProps) => {
   const initHistory = {
     history: [0, 0, 0, 0, 0, 0, 0, 0],
     checkToday: false,
+    swagToday: false,
   };
   const [swag, isSwag] = useState(false);
   const [history, setHistory] = useState(initHistory);
@@ -192,13 +202,14 @@ const WordleDescription = ({ desc, tryCount }: WordleProps) => {
       tmpHistory.history[0] += 1;
     }
     tmpHistory.checkToday = true;
+    tmpHistory.swagToday = swag;
     setHistory(tmpHistory);
     localStorage.setItem("wordle_history", JSON.stringify(tmpHistory));
   };
 
   const onSubmit = () => {
     axios.post("http://192.168.121.36:4000/api/comments", {
-      "body": `[Wordle] 💃 누군가 ${tryCount} 번 만에 성공! 👯‍♂️`,
+      "body": `[Wordle] 🙈 누군가 ${tryCount} 번 만에 성공! 🙉‍\n${createResultString(matrix, tryCount)}`,
       "date": new Date().toLocaleString(),
       "url": null,
       "type": "wordleNotice",
@@ -206,6 +217,28 @@ const WordleDescription = ({ desc, tryCount }: WordleProps) => {
       .then(() => {
         isSwag(true);
       });
+  };
+
+  const createResultString = (matrix: lineType[], tryCount: number) => {
+    let result: string = "";
+    for (let i = 0; i < tryCount; i++) {
+      matrix[i].map((word) => {
+        switch (word.state) {
+          case "Strike":
+            result += "💙";
+            break;
+          case "Ball":
+            result += "💛";
+            break;
+          case "Filled":
+          default:
+            result += "🖤";
+            break;
+        }
+      });
+      result += "\n";
+    }
+    return result;
   };
 
   return (
@@ -248,7 +281,7 @@ const WordleDescription = ({ desc, tryCount }: WordleProps) => {
             </div>
           </ReactTooltip>
           {
-            <WordleSwagButton onClick={onSubmit} swag={swag}>
+            <WordleSwagButton onClick={onSubmit} swag={swag} disabled={swag}>
               {swag ? "Swagged" : "Swag"}
             </WordleSwagButton>
           }
