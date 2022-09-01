@@ -176,7 +176,7 @@ const WordleDescription = ({ desc, tryCount, matrix }: WordleProps) => {
     checkToday: false,
     swagToday: false,
   };
-  const [swag, isSwag] = useState(false);
+  const [swag, setSwag] = useState(false);
   const [history, setHistory] = useState(initHistory);
 
   useEffect(() => {
@@ -186,16 +186,10 @@ const WordleDescription = ({ desc, tryCount, matrix }: WordleProps) => {
   }, [desc, tryCount]);
 
   useEffect(() => {
-    if (swag) {
-      const tmpHistory: WordleHistory = { ...history };
-      tmpHistory.swagToday = true;
-      setHistory(tmpHistory);
-    }
-  }, [swag]);
-
-  useEffect(() => {
     if (localStorage.getItem("wordle_history")) {
-      setHistory(() => JSON.parse(localStorage.getItem("wordle_history")!));
+      const tmpHistory = JSON.parse(localStorage.getItem("wordle_history")!);
+      setHistory(() => tmpHistory);
+      setSwag(tmpHistory.swagToday);
     } else {
       localStorage.setItem("wordle_history", JSON.stringify(initHistory));
     }
@@ -222,7 +216,11 @@ const WordleDescription = ({ desc, tryCount, matrix }: WordleProps) => {
       "type": "wordleNotice",
     })
       .then(() => {
-        isSwag(true);
+        setSwag(true);
+        const tmpHistory: WordleHistory = { ...history };
+        tmpHistory.swagToday = true;
+        setHistory(tmpHistory);
+        localStorage.setItem("wordle_history", JSON.stringify(tmpHistory));
       });
   };
 
