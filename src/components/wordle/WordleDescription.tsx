@@ -186,6 +186,14 @@ const WordleDescription = ({ desc, tryCount, matrix }: WordleProps) => {
   }, [desc, tryCount]);
 
   useEffect(() => {
+    if (swag) {
+      const tmpHistory: WordleHistory = { ...history };
+      tmpHistory.swagToday = true;
+      setHistory(tmpHistory);
+    }
+  }, [swag]);
+
+  useEffect(() => {
     if (localStorage.getItem("wordle_history")) {
       setHistory(() => JSON.parse(localStorage.getItem("wordle_history")!));
     } else {
@@ -202,7 +210,6 @@ const WordleDescription = ({ desc, tryCount, matrix }: WordleProps) => {
       tmpHistory.history[0] += 1;
     }
     tmpHistory.checkToday = true;
-    tmpHistory.swagToday = swag;
     setHistory(tmpHistory);
     localStorage.setItem("wordle_history", JSON.stringify(tmpHistory));
   };
