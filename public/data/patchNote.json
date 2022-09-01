@@ -1,5 +1,11 @@
 [
   {
+    "date": "2022-09-01",
+    "title": "v1.3.4",
+    "content": "- Wordle 자랑하기 기능 개선\n- YY선임님 컴퓨터에서도 잘 돌아갑니다\n- 기타 버그 수정",
+    "imgURL": "stat.json"
+  },
+  {
     "date": "2022-08-31",
     "title": "v1.3.3",
     "content": "- Wordle 내 전적 확인 가능\n- 버그 수정\n- todo: 자랑하기 기능 개선",

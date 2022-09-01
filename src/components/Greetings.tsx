@@ -41,10 +41,8 @@ const ControlButton = styled.button<{isActive?: boolean}>`
 const FanRotationControlBlock = styled.div<{ rotate: string }>`
   margin-top: 30px;
   
-  @media (prefers-reduced-motion: no-preference) {
-    animation: FanRotation infinite 4s linear forwards;
-    animation-play-state: ${props => `${props.rotate}`};
-  }
+  animation: FanRotation infinite 4s linear forwards;
+  animation-play-state: ${props => `${props.rotate}`};
   
   @keyframes FanRotation {
     0%, 50%, 100% {

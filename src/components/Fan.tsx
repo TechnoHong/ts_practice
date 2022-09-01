@@ -53,10 +53,7 @@ const FanImgContainer = styled.div<{ isDragging: boolean, speed: number }>`
   border-radius: 50%;
   transition: all 1s;
   ${props => props.isDragging ? `border: 2px solid gray` : `border: 0`};
-  
-  @media (prefers-reduced-motion: no-preference) {
-    ${props => `animation: App-logo-spin infinite ${props.speed > 0.01 ? props.speed : 0.01}ms linear`}
-  }
+  animation: App-logo-spin infinite ${props => props.speed > 0.01 ? props.speed : 0.01}ms linear;
   
   @keyframes App-logo-spin {
     0% {
