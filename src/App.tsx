@@ -8,7 +8,7 @@ import Wordle from "./components/wordle/Wordle";
 function App() {
   return (
     <>
-      <Falling/>
+      {/*<Falling/> Season Out*/}
       <Comments/>
       <Modal/>
       <Wordle/>

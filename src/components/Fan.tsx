@@ -17,6 +17,7 @@ const FanContainer = styled.header`
   justify-content: center;
   font-size: calc(10px + 2vmin);
   color: white;
+  overflow: hidden;
 `;
 
 const FanRPMContainer = styled.div<{ speed: number }>`

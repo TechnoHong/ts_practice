@@ -6,6 +6,7 @@ import { RootState } from "../store/store";
 import { hideComments } from "../store/commentsSlice";
 import TenorSearch from "./TenorSearch";
 import useInterval from "../hooks/useInterval";
+import { ModalBackgroundContainer } from "./common/ModalStyle";
 
 type comment = {
   "id": number,
@@ -14,26 +15,6 @@ type comment = {
   "url"?: string,
   "type": string,
 }
-
-const CommentsBackgroundContainer = styled.div<{ isShow: boolean }>`
-  position: fixed;
-  display: ${props => props.isShow ? `flex` : "none"};
-  align-items: center;
-  background-color: rgba(0, 0, 0, 0.6);
-  width: 100%;
-  height: 100%;
-  z-index: 99;
-  animation: FadeIn 250ms linear;
-
-  @keyframes FadeIn {
-    from {
-      opacity: 0;
-    }
-    to {
-      opacity: 1;
-    }
-  }
-`;
 
 const HeaderContainer = styled.div`
   display: flex;
@@ -48,6 +29,11 @@ const ContentsContainer = styled.div`
   width: 60%;
   height: 95%;
   background: #282c34;
+  
+  @media ( max-width: 767px) {
+    width: 100%;
+    height: 100%;
+  }
 `;
 
 const CommentsContainer = styled.div`
@@ -229,10 +215,10 @@ const Comments = () => {
   };
 
   return (
-    <CommentsBackgroundContainer isShow={visibility} onClick={onClose}>
+    <ModalBackgroundContainer isShow={visibility} onClick={onClose}>
       <ContentsContainer onClick={e => e.stopPropagation()}>
         <HeaderContainer>
-          <HeaderIcon onClick={getComments}>♻️<span style={{ fontSize: "0.75rem" }}> {count}초 뒤 새로고침..</span></HeaderIcon>
+          <HeaderIcon onClick={getComments}>♻️<span style={{ fontSize: "0.75rem", whiteSpace: "pre" }}> {count}초 뒤 새로고침..</span></HeaderIcon>
           <HeaderTitle>방명록</HeaderTitle>
           <HeaderIcon style={{ textAlign: "right" }} onClick={onClose}>❌</HeaderIcon>
         </HeaderContainer>
@@ -274,7 +260,7 @@ const Comments = () => {
           <SubmitButton onClick={onSubmit}>등록</SubmitButton>
         </InputContainer>
       </ContentsContainer>
-    </CommentsBackgroundContainer>
+    </ModalBackgroundContainer>
   );
 };
 

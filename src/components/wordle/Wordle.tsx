@@ -6,6 +6,8 @@ import { RootState } from "../../store/store";
 import { hideWordle } from "../../store/wordleSlice";
 import ReactTooltip from "react-tooltip";
 import WordleDescription, { WordleHistory } from "./WordleDescription";
+import WordleKeyPad from "./WordleKeyPad";
+import { ModalBackgroundContainer } from "../common/ModalStyle";
 
 const OWLBOT_KEY = process.env.REACT_APP_OWLBOT_KEY;
 const WORDLE_KEY: string = process.env.REACT_APP_TODAY_WORDLE_KEY!;
@@ -25,26 +27,6 @@ interface wordType {
 
 type WordStateType = "Nothing" | "Filled" | "Ball" | "Strike";
 export type lineType = wordType[];
-
-const WordleBackgroundContainer = styled.div<{ isShow: boolean }>`
-  position: fixed;
-  display: ${props => props.isShow ? `flex` : `none`};
-  align-items: center;
-  background-color: rgba(0, 0, 0, 0.6);
-  width: 100%;
-  height: 100%;
-  z-index: 99;
-  animation: FadeIn 250ms linear;
-
-  @keyframes FadeIn {
-    from {
-      opacity: 0;
-    }
-    to {
-      opacity: 1;
-    }
-  }
-`;
 
 const WordleTitleContainer = styled.div`
   display: flex;
@@ -73,6 +55,12 @@ const WordleContentContainer = styled.div`
   margin: 0 auto;
   border-radius: 1rem;
   padding: 1rem 3rem;
+
+  @media ( max-width: 767px ) {
+    width: 100%;
+    height: 100%;
+    padding: 1vmin 3vmin;
+  }
 `;
 
 const WordleMainContent = styled.div`
@@ -81,6 +69,8 @@ const WordleMainContent = styled.div`
 `;
 
 const WordleWordContainer = styled.div`
+  margin: 0 auto;
+
   & + & {
     margin-top: 0.5rem;
   }
@@ -118,6 +108,13 @@ const WordleAlphabetContainer = styled.span<{ wordState: WordStateType, isCursor
 
   & + & {
     margin-left: 0.25rem;
+  }
+
+  @media ( max-width: 767px ) {
+    width: 15vmin;
+    height: 20vmin;
+    font-size: 10vmin;
+    line-height: 20vmin;
   }
 `;
 
@@ -184,7 +181,7 @@ const Wordle = () => {
       history.swagToday = false;
       localStorage.setItem("wordle_history", JSON.stringify(history));
     }
-  }
+  };
 
   const isValidWord = (word: string) => {
     axios.get("https://still-castle-98164.herokuapp.com/https://owlbot.info/api/v4/dictionary/" + word, {
@@ -263,7 +260,7 @@ const Wordle = () => {
 
   useEffect(() => {
     saveLocalStorage();
-  }, [desc, cursorPos])
+  }, [desc, cursorPos]);
 
   const saveLocalStorage = () => {
     const saveValue: LocalStorageValue = {
@@ -276,18 +273,22 @@ const Wordle = () => {
   };
 
   const onKeyPress = (e: React.KeyboardEvent) => {
+    inputKey(e.key);
+  };
+
+  const inputKey = (key: string) => {
     const expression = /^[a-zA-Z]*$/;
 
     if (desc === "FAILED" || desc === "CORRECT") return;
 
-    if (e.key === "Enter" && cursorPos[1] === matrix[0].length && desc !== "VERIFICATION") { // 엔터입력 정답제출
+    if (key === "Enter" && cursorPos[1] === matrix[0].length && desc !== "VERIFICATION") { // 엔터입력 정답제출
       setDesc(() => "VERIFICATION");
       const lineWord = getLineWord(matrix[cursorPos[0]]);
       isValidWord(lineWord); // 단어 유효성 확인
       return;
     }
 
-    if (e.key === "Backspace" && cursorPos[1] !== 0) { // 지우기
+    if (key === "Backspace" && cursorPos[1] !== 0) { // 지우기
       const copyArr = [...matrix];
       if (cursorPos[1] !== matrix[0].length) {
         copyArr[cursorPos[0]][cursorPos[1]].isCursor = false;
@@ -300,13 +301,13 @@ const Wordle = () => {
       return;
     }
 
-    if (!(expression.test(e.key) && (e.key.length === 1) && (cursorPos[1] < matrix[0].length))) {
-      console.log("Invalid Input", e.key, cursorPos[1], matrix[0].length);
+    if (!(expression.test(key) && (key.length === 1) && (cursorPos[1] < matrix[0].length))) {
+      console.log("Invalid Input", key, cursorPos[1], matrix[0].length);
       return;
     } else { // 한줄 입력
       const copyArr = [...matrix];
       copyArr[cursorPos[0]][cursorPos[1]].isCursor = false;
-      copyArr[cursorPos[0]][cursorPos[1]].word = e.key.toUpperCase();
+      copyArr[cursorPos[0]][cursorPos[1]].word = key.toUpperCase();
       copyArr[cursorPos[0]][cursorPos[1]].state = "Filled";
       setCursorPos([cursorPos[0], cursorPos[1] + 1]);
 
@@ -316,10 +317,10 @@ const Wordle = () => {
       setMatrix(copyArr);
       return;
     }
-  };
+  }
 
   return (
-    <WordleBackgroundContainer isShow={wordle} onClick={onClose}>
+    <ModalBackgroundContainer isShow={wordle} onClick={onClose}>
       <WordleContentContainer onClick={e => e.stopPropagation()} onKeyDown={onKeyPress} tabIndex={0}>
         <WordleTitleContainer>
           <div className="title">WORDLE</div>
@@ -338,8 +339,9 @@ const Wordle = () => {
           {lineLoop()}
         </WordleMainContent>
         <WordleDescription desc={desc} tryCount={cursorPos[0] + 1} matrix={matrix} />
+        <WordleKeyPad inputKey={inputKey}/>
       </WordleContentContainer>
-    </WordleBackgroundContainer>
+    </ModalBackgroundContainer>
   );
 };
 

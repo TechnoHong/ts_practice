@@ -10,6 +10,7 @@ const WordleDescriptionContainer = styled.div`
   align-items: center;
   height: 50px;
   margin-top: 2rem;
+  margin-bottom: 1rem;
 `;
 
 const WordleInvalidContainer = styled.div`
