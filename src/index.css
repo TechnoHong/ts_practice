@@ -11,3 +11,9 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+@font-face {
+  font-family: 'DoHyeon';
+  font-weight: 100;
+  src: url("./styles/fonts/DoHyeon-Regular.ttf");
+}

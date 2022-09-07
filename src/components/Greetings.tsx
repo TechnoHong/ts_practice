@@ -58,6 +58,8 @@ const FanRotationControlBlock = styled.div<{ rotate: string }>`
 `;
 
 const FanPowerControlBlock = styled.div<{ speed: number }>`
+  font-family: DoHyeon;
+  font-size: 2rem;
   @media (prefers-reduced-motion: no-preference) {
     ${props => `animation: FanPower infinite ${props.speed}ms linear`}
   }

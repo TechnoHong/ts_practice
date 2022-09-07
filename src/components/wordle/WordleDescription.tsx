@@ -32,7 +32,7 @@ const WordleInvalidContainer = styled.div`
 const WordleCorrectContainer = styled.div`
   display: flex;
   width: 100%;
-  justify-content: space-around;
+  justify-content: center;
   align-items: center;
 `;
 
@@ -46,6 +46,7 @@ const WordleHistoryButton = styled.div`
   border: 2px solid black;
   border-radius: 6px;
   padding: 2px 1rem;
+  margin-left: 10px;
   background: #222222;
 
   &:hover {
@@ -58,6 +59,7 @@ const WordleSwagButton = styled.button<{ swag: boolean }>`
   animation-play-state: ${props => props.swag ? "paused" : "running"};
   height: 2rem;
   padding: 0 1rem;
+  margin-left: 10px;
   color: ${props => props.swag ? "#6e6f70" : "#C9CACC"};
   background: #222222;
   border-radius: 6px;

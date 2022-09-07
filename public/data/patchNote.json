@@ -1,8 +1,14 @@
 [
   {
+    "date": "2022-09-07",
+    "title": "v1.4.0",
+    "content": "- 반응형, Mobile 환경 지원 (beta)\n- 홈페이지 리뉴얼",
+    "imgURL": "mobile.json"
+  },
+  {
     "date": "2022-09-01",
     "title": "v1.3.4",
-    "content": "- Wordle 자랑하기 기능 개선\n- YY선임님 컴퓨터에서도 잘 돌아갑니다\n- 기타 버그 수정",
+    "content": "- Wordle 자랑하기 기능 개선\n- 선풍기 잔고장 수리\n- 기타 버그 수정",
     "imgURL": "trash.json"
   },
   {

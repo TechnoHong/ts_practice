@@ -15,6 +15,11 @@ const ModalContentContainer = styled.div`
   height: 80%;
   border-radius: 1rem;
   padding: 2rem;
+  
+  @media ( max-width: 767px ) {
+    width: 100%;
+    height: 100%;
+  }
 `;
 
 const ModalHeader = styled.div`

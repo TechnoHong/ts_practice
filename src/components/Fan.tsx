@@ -2,15 +2,14 @@ import React, { ChangeEvent, useCallback, useEffect, useRef, useState } from "re
 import styled from "styled-components";
 import Greetings from "./Greetings";
 import useInterval from "../hooks/useInterval";
-import Author from "./Author";
 import { useDragAndDrop } from "../hooks/useDragAndDrop";
-import Menus from "./Menus";
+import { SideContract, SideExpand } from "./SideMenu";
 
 const HIGH_SPEED = 400;
 
 const FanContainer = styled.header`
   background-color: #282c34;
-  min-height: 100vh;
+  height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -18,11 +17,16 @@ const FanContainer = styled.header`
   font-size: calc(10px + 2vmin);
   color: white;
   overflow: hidden;
+  margin-left: ${SideExpand}px;
+
+  @media ( max-width: 767px ) {
+    margin-left: ${SideContract}px;
+  }
 `;
 
 const FanRPMContainer = styled.div<{ speed: number }>`
-  position: fixed;
-  width: 100vw;
+  position: absolute;
+  top: 0;
   text-align: center;
   font-size: calc(1rem + 2vmin);
   font-weight: bolder;
@@ -116,11 +120,14 @@ const ChangeFanBtn = styled.button<{ direction: string }>`
   border: 0;
   border-radius: 50%;
   color: #282c34;
-  position: fixed;
+  position: absolute;
   font-size: 1rem;
   padding: 10px;
-  ${props => props.direction === "next" ? `right: 1rem` : `left: 1rem`};
+  ${props => props.direction === "next" ? `right: 15px` : `left: calc(${SideExpand}px + 15px)`};
   
+  @media ( max-width: 767px ) {
+    ${props => props.direction === "next" ? `right: 15px` : `left: calc(${SideContract}px + 15px)`};
+  }
   &:hover {
     cursor: pointer;
     animation: ShakeHand 1s linear infinite;
@@ -206,11 +213,10 @@ function Fan() {
 
   return (
     <div className="App">
-      <Menus/>
-      <FanRPMContainer speed={duration}>
-        {rpmRef.current.toFixed()}<span style={{fontSize: "1rem"}}>RPM</span>
-      </FanRPMContainer>
       <FanContainer>
+        <FanRPMContainer speed={duration}>
+          {rpmRef.current.toFixed()}<span style={{fontSize: "1rem"}}>RPM</span>
+        </FanRPMContainer>
         <FanImgContainer
           ref={dragRef}
           isDragging={isDragging}
@@ -247,7 +253,6 @@ function Fan() {
           />
         </div>
         <Greetings name="선풍기" />
-        <Author />
         <ChangeFanBtn direction="next" onClick={onClickNextFan}>👉</ChangeFanBtn>
         <ChangeFanBtn direction="prev" onClick={onClickPrevFan}>👈</ChangeFanBtn>
       </FanContainer>

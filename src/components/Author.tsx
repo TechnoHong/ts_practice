@@ -8,6 +8,10 @@ const AuthorContainer = styled.div`
   bottom: 3px;
   right: 3px;
   text-align: right;
+  
+  @media ( max-width: 767px ) {
+    display: none;
+  }
 `;
 
 const AuthorHeaderContainer = styled.div`
@@ -48,7 +52,7 @@ const Author = () => {
         @Hong
       </AuthorHeaderContainer>
       <AuthorPatchNoteContainer onClick={onClick}>
-        v{process.env.REACT_APP_VERSION} Autumn Edition 패치노트
+        v{process.env.REACT_APP_VERSION} 패치노트
       </AuthorPatchNoteContainer>
       <AuthorSubContainer>
         피드백은 <span style={{color: "#61dafb"}} onMouseOver={onHover} onMouseLeave={onLeave}>{dm}</span> 부탁드려요🙏

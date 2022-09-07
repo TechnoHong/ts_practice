@@ -1,13 +1,10 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import styled from "styled-components";
-import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "../../store/store";
-import { hideWordle } from "../../store/wordleSlice";
 import ReactTooltip from "react-tooltip";
 import WordleDescription, { WordleHistory } from "./WordleDescription";
 import WordleKeyPad from "./WordleKeyPad";
-import { ModalBackgroundContainer } from "../common/ModalStyle";
+import { SideContract, SideExpand } from "../SideMenu";
 
 const OWLBOT_KEY = process.env.REACT_APP_OWLBOT_KEY;
 const WORDLE_KEY: string = process.env.REACT_APP_TODAY_WORDLE_KEY!;
@@ -30,9 +27,8 @@ export type lineType = wordType[];
 
 const WordleTitleContainer = styled.div`
   display: flex;
-  justify-content: space-between;
   align-items: baseline;
-  margin-bottom: 1rem;
+  padding: 25px;
 
   .title {
     font-size: 2rem;
@@ -46,20 +42,22 @@ const WordleTitleContainer = styled.div`
     background: transparent;
     color: #C9CACC;
     border: 0;
+    padding: 0;
+    margin-left: 5px;
   }
 `;
 
 const WordleContentContainer = styled.div`
   display: block;
+  min-height: 100vh;
+  height: 100%;
   background: #282c34;
-  margin: 0 auto;
-  border-radius: 1rem;
-  padding: 1rem 3rem;
+  padding: 0 2rem;
+  margin-left: ${SideExpand}px;
 
   @media ( max-width: 767px ) {
-    width: 100%;
-    height: 100%;
-    padding: 1vmin 3vmin;
+    margin-left: ${SideContract}px;
+    padding: 8px 10px;
   }
 `;
 
@@ -111,10 +109,10 @@ const WordleAlphabetContainer = styled.span<{ wordState: WordStateType, isCursor
   }
 
   @media ( max-width: 767px ) {
-    width: 15vmin;
-    height: 20vmin;
-    font-size: 10vmin;
-    line-height: 20vmin;
+    width: 10vmin;
+    height: 15vmin;
+    font-size: 7vmin;
+    line-height: 15vmin;
   }
 `;
 
@@ -156,17 +154,9 @@ const Wordle = () => {
     }
   }, []);
 
-  const wordle = useSelector((state: RootState) => {
-    return state.wordle.value;
-  });
-  const dispatch = useDispatch();
   const [matrix, setMatrix] = useState(initMatrix);
   const [cursorPos, setCursorPos] = useState([0, 0]);
   const [desc, setDesc] = useState("");
-
-  const onClose = () => {
-    dispatch(hideWordle());
-  };
 
   const checkPlayDate = (savedTime: Date) => {
     const today = new Date().getDate();
@@ -317,31 +307,29 @@ const Wordle = () => {
       setMatrix(copyArr);
       return;
     }
-  }
+  };
 
   return (
-    <ModalBackgroundContainer isShow={wordle} onClick={onClose}>
-      <WordleContentContainer onClick={e => e.stopPropagation()} onKeyDown={onKeyPress} tabIndex={0}>
-        <WordleTitleContainer>
-          <div className="title">WORDLE</div>
-          <button className="guide" data-tip data-for="wordleGuide">HOW TO</button>
-          <ReactTooltip id="wordleGuide" effect="solid" place="bottom">
-            <div>⚾️ 영어 단어 맞추기 게임</div>
-            <div>⚾️ 각 시행마다 온전한 n글자 단어를 제출 [Enter]</div>
-            <div>⚾️ 정답 단어는 24시간마다 갱신</div>
-            <div style={{ color: "#4679e8" }}>파란색: 알파벳 종류와 위치가 모두 일치 🎯</div>
-            <div style={{ color: "#E8E346" }}>노란색: 위치만 불일치</div>
-            <div style={{ color: "#C9CACC" }}>회색: 정답 단어에 없는 알파벳</div>
-            <div style={{ fontSize: "0.25rem", textAlign: "right" }}>[출처] https://ko.wikipedia.org/wiki/워들</div>
-          </ReactTooltip>
-        </WordleTitleContainer>
-        <WordleMainContent>
-          {lineLoop()}
-        </WordleMainContent>
-        <WordleDescription desc={desc} tryCount={cursorPos[0] + 1} matrix={matrix} />
-        <WordleKeyPad inputKey={inputKey}/>
-      </WordleContentContainer>
-    </ModalBackgroundContainer>
+    <WordleContentContainer onKeyDown={onKeyPress} tabIndex={0}>
+      <WordleTitleContainer>
+        <div className="title">WORDLE</div>
+        <button className="guide" data-tip data-for="wordleGuide">HOW TO ?</button>
+        <ReactTooltip id="wordleGuide">
+          <div>⚾️ 영어 단어 맞추기 게임</div>
+          <div>⚾️ 각 시행마다 온전한 n글자 단어를 제출 [Enter]</div>
+          <div>⚾️ 정답 단어는 24시간마다 갱신</div>
+          <div style={{ color: "#4679e8" }}>파란색: 알파벳 종류와 위치가 모두 일치 🎯</div>
+          <div style={{ color: "#E8E346" }}>노란색: 위치만 불일치</div>
+          <div style={{ color: "#C9CACC" }}>회색: 정답 단어에 없는 알파벳</div>
+          <div style={{ fontSize: "0.25rem", textAlign: "right" }}>[출처] https://ko.wikipedia.org/wiki/워들</div>
+        </ReactTooltip>
+      </WordleTitleContainer>
+      <WordleMainContent>
+        {lineLoop()}
+      </WordleMainContent>
+      <WordleDescription desc={desc} tryCount={cursorPos[0] + 1} matrix={matrix} />
+      <WordleKeyPad inputKey={inputKey} />
+    </WordleContentContainer>
   );
 };
 

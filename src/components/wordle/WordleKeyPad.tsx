@@ -24,15 +24,15 @@ const WordleFunctionButton = styled.button`
 `;
 
 const WordleKeyButton = styled.button`
-  width: 8vmin;
-  height: 8vmin;
+  width: 6vmin;
+  height: 6vmin;
   & + & {
     margin-left: 2px;
   }
   vertical-align: middle;
   text-align: center;
-  font-size: 5vmin;
-  line-height: 8vmin;
+  font-size: 4vmin;
+  line-height: 7vmin;
 `;
 
 type KeyPadProps = {

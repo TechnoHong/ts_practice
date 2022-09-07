@@ -1,12 +1,9 @@
 import React, { useEffect, useRef, useState } from "react";
 import axios from "axios";
 import styled from "styled-components";
-import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "../store/store";
-import { hideComments } from "../store/commentsSlice";
 import TenorSearch from "./TenorSearch";
 import useInterval from "../hooks/useInterval";
-import { ModalBackgroundContainer } from "./common/ModalStyle";
+import { SideContract, SideExpand } from "./SideMenu";
 
 type comment = {
   "id": number,
@@ -25,14 +22,12 @@ const HeaderContainer = styled.div`
 const ContentsContainer = styled.div`
   display: flex;
   flex-direction: column;
-  margin: 0 auto;
-  width: 60%;
-  height: 95%;
   background: #282c34;
-  
-  @media ( max-width: 767px) {
-    width: 100%;
-    height: 100%;
+  height: 100vh;
+  margin-left: ${SideExpand}px;
+
+  @media ( max-width: 767px ) {
+    margin-left: ${SideContract}px;
   }
 `;
 
@@ -42,6 +37,7 @@ const CommentsContainer = styled.div`
   flex-direction: column;
   align-items: start;
   overflow-y: scroll;
+  overflow-x: hidden;
 
   &::-webkit-scrollbar {
     width: 8px;
@@ -101,6 +97,7 @@ const SubmitButton = styled.button`
 
 const HeaderIcon = styled.div`
   flex: 1 1 0;
+
   &:hover {
     cursor: pointer;
   }
@@ -108,11 +105,6 @@ const HeaderIcon = styled.div`
   &:active {
     opacity: 0.5;
   }
-`;
-
-const HeaderTitle = styled.div`
-  flex: 2 1 0;
-  text-align: center;
 `;
 
 const GifImage = styled.img`
@@ -135,10 +127,6 @@ const Comments = () => {
   const [error, setError] = useState(false);
   const [count, setCount] = useState(5);
   const scrollRef = useRef<HTMLDivElement>(null);
-  const dispatch = useDispatch();
-  const visibility = useSelector((state: RootState) => {
-    return state.comments.value;
-  });
 
   useInterval(() => {
     if (count === 0) {
@@ -147,7 +135,7 @@ const Comments = () => {
     } else {
       setCount(count - 1);
     }
-  }, visibility ? 1000 : null);
+  }, 1000);
 
   const scrollToBottom = () => {
     if (scrollRef.current) {
@@ -169,11 +157,9 @@ const Comments = () => {
   };
 
   useEffect(() => {
-    if (visibility) {
-      getComments();
-      scrollToBottom();
-    }
-  }, [visibility]);
+    getComments();
+    scrollToBottom();
+  }, []);
 
   useEffect(scrollToBottom, [comments]);
 
@@ -184,10 +170,6 @@ const Comments = () => {
       setGifMode(false);
     }
   }, [input]);
-
-  const onClose = () => {
-    dispatch(hideComments());
-  };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInput(e.target.value);
@@ -215,52 +197,49 @@ const Comments = () => {
   };
 
   return (
-    <ModalBackgroundContainer isShow={visibility} onClick={onClose}>
-      <ContentsContainer onClick={e => e.stopPropagation()}>
-        <HeaderContainer>
-          <HeaderIcon onClick={getComments}>♻️<span style={{ fontSize: "0.75rem", whiteSpace: "pre" }}> {count}초 뒤 새로고침..</span></HeaderIcon>
-          <HeaderTitle>방명록</HeaderTitle>
-          <HeaderIcon style={{ textAlign: "right" }} onClick={onClose}>❌</HeaderIcon>
-        </HeaderContainer>
-        <CommentsContainer ref={scrollRef}>
-          {(comments && !error) &&
-            comments.map((cmt, index) => (
-              <CommentItemContainer key={index}>
-                {
-                  cmt.url &&
-                  <GifImage src={cmt.url} />
-                }
-                {
-                  cmt.body &&
-                  <CommentBody type={cmt.type ? cmt.type : ""}>
-                    {cmt.body}
-                  </CommentBody>
-                }
-                <CommentDate>
-                  {cmt.date}
-                </CommentDate>
-              </CommentItemContainer>
-            ))
-          }
-          {
-            error &&
-            <NoticeContainer>{"🤔\nError"}</NoticeContainer>
-          }
-          {
-            (!error && comments.length === 0) &&
-            <NoticeContainer>{"💁‍♂️\nHello!"}</NoticeContainer>
-          }
-        </CommentsContainer>
-        {
-          (gifMode && !error) &&
-          <TenorSearch gifMode={setGifMode} input={input.slice(1)} setInput={setInput} getComments={getComments} />
+    <ContentsContainer>
+      <HeaderContainer>
+        <HeaderIcon onClick={getComments}>♻️<span
+          style={{ fontSize: "0.75rem", whiteSpace: "pre" }}> {count}초 뒤 새로고침..</span></HeaderIcon>
+      </HeaderContainer>
+      <CommentsContainer ref={scrollRef}>
+        {(comments && !error) &&
+          comments.map((cmt, index) => (
+            <CommentItemContainer key={index}>
+              {
+                cmt.url &&
+                <GifImage src={cmt.url} />
+              }
+              {
+                cmt.body &&
+                <CommentBody type={cmt.type ? cmt.type : ""}>
+                  {cmt.body}
+                </CommentBody>
+              }
+              <CommentDate>
+                {cmt.date}
+              </CommentDate>
+            </CommentItemContainer>
+          ))
         }
-        <InputContainer>
-          <InputInput placeholder="$로 시작해서 gif를 보내보세요" onChange={handleChange} value={input} onKeyDown={onKeyPress} />
-          <SubmitButton onClick={onSubmit}>등록</SubmitButton>
-        </InputContainer>
-      </ContentsContainer>
-    </ModalBackgroundContainer>
+        {
+          error &&
+          <NoticeContainer>{"🤔\nError"}</NoticeContainer>
+        }
+        {
+          (!error && comments.length === 0) &&
+          <NoticeContainer>{"💁‍♂️\nHello!"}</NoticeContainer>
+        }
+      </CommentsContainer>
+      {
+        (gifMode && !error) &&
+        <TenorSearch gifMode={setGifMode} input={input.slice(1)} setInput={setInput} getComments={getComments} />
+      }
+      <InputContainer>
+        <InputInput placeholder="$로 시작해서 gif를 보내보세요" onChange={handleChange} value={input} onKeyDown={onKeyPress} />
+        <SubmitButton onClick={onSubmit}>등록</SubmitButton>
+      </InputContainer>
+    </ContentsContainer>
   );
 };
 
