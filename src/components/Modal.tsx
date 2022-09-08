@@ -5,7 +5,26 @@ import { RootState } from "../store/store";
 import { hideModal, showModal } from "../store/modalSlice";
 import axios from "axios";
 import PatchNoteItem, { PatchItem } from "./PatchNoteItem";
-import { ModalBackgroundContainer } from "./common/ModalStyle";
+
+const ModalBackgroundContainer = styled.div<{ isShow: boolean }>`
+  position: fixed;
+  display: ${props => props.isShow ? `flex` : "none"};
+  align-items: center;
+  background-color: rgba(0, 0, 0, 0.6);
+  width: 100%;
+  height: 100%;
+  z-index: 99;
+  animation: FadeIn 250ms linear;
+
+  @keyframes FadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+`;
 
 const ModalContentContainer = styled.div`
   display: block;
@@ -59,7 +78,7 @@ const Modal = () => {
   });
 
   const current = new Date();
-  const HAS_VISITED_BEFORE = localStorage.getItem("hasVisitedBefore");
+  const PopUpExpiresTime = localStorage.getItem("hasVisitedBefore");
 
   const onClose = () => {
     dispatch(hideModal());
@@ -72,13 +91,12 @@ const Modal = () => {
   };
 
   useEffect(() => {
-    if (HAS_VISITED_BEFORE && new Date(HAS_VISITED_BEFORE) > current) {
+    if (PopUpExpiresTime && parseInt(PopUpExpiresTime) > current.getTime()) {
       return;
-    }
-    if (!HAS_VISITED_BEFORE) {
+    } else {
       dispatch(showModal());
     }
-  }, [HAS_VISITED_BEFORE]);
+  }, []);
 
   useEffect(() => {
     axios.get("/data/patchNote.json")

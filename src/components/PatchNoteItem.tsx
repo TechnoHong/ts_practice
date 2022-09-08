@@ -13,6 +13,13 @@ type PatchItemProps = {
   item: PatchItem,
 }
 
+const ItemContainer = styled.div`
+  & + & {
+    border-top: 2px #949494 solid;
+    margin-top: 10px;
+  }
+`;
+
 const HeaderContainer = styled.div`
   display: block;
 `;
@@ -57,7 +64,7 @@ const PatchNoteItem = ({ item }: PatchItemProps) => {
   }, []);
 
   return (
-    <div>
+    <ItemContainer>
       <HeaderContainer>
         <TitleContainer>{item.title}</TitleContainer>
         <DateContainer>{item.date}</DateContainer>
@@ -68,7 +75,7 @@ const PatchNoteItem = ({ item }: PatchItemProps) => {
           {item.content}
         </DescriptionContainer>
       </ContentContainer>
-    </div>
+    </ItemContainer>
   );
 };
 
