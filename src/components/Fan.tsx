@@ -34,7 +34,7 @@ const FanRPMContainer = styled.div<{ speed: number }>`
 
   animation: Vibrate 5ms linear infinite;
   animation-play-state: ${props => props.speed <= HIGH_SPEED ? `running` : `paused`};
-  
+
   ${props => props.speed <= HIGH_SPEED && `color: #ff3333`};
 
   @keyframes Vibrate {
@@ -59,7 +59,7 @@ const FanImgContainer = styled.div<{ isDragging: boolean, speed: number }>`
   transition: all 1s;
   ${props => props.isDragging ? `border: 2px solid gray` : `border: 0`};
   animation: App-logo-spin infinite ${props => props.speed > 0.01 ? props.speed : 0.01}ms linear;
-  
+
   @keyframes App-logo-spin {
     0% {
       transform: rotate(0deg);
@@ -124,15 +124,16 @@ const ChangeFanBtn = styled.button<{ direction: string }>`
   font-size: 1rem;
   padding: 10px;
   ${props => props.direction === "next" ? `right: 15px` : `left: calc(${SideExpand}px + 15px)`};
-  
+
   @media ( max-width: 767px ) {
     ${props => props.direction === "next" ? `right: 15px` : `left: calc(${SideContract}px + 15px)`};
   }
+
   &:hover {
     cursor: pointer;
     animation: ShakeHand 1s linear infinite;
   }
-  
+
   @keyframes ShakeHand {
     0%, 50%, 100% {
       transform: translate(0, 0);
@@ -193,7 +194,7 @@ function Fan() {
   };
 
   const onClickPrevFan = () => {
-    fanIndex.current = (fanIndex.current === 0 ? Fans.length - 1 : fanIndex.current - 1)
+    fanIndex.current = (fanIndex.current === 0 ? Fans.length - 1 : fanIndex.current - 1);
     setFile(Fans[fanIndex.current]!);
   };
 
@@ -205,17 +206,17 @@ function Fan() {
   }, []);
 
   const isDragging = useDragAndDrop(onChangeFiles, dragRef);
-  
+
   useEffect(() => {
     rpmRef.current = Math.floor(60000 / duration);
-  }, [duration])
+  }, [duration]);
 
 
   return (
     <div className="App">
       <FanContainer>
         <FanRPMContainer speed={duration}>
-          {rpmRef.current.toFixed()}<span style={{fontSize: "1rem"}}>RPM</span>
+          {rpmRef.current.toFixed()}<span style={{ fontSize: "1rem" }}>RPM</span>
         </FanRPMContainer>
         <FanImgContainer
           ref={dragRef}

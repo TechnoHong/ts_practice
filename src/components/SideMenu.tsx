@@ -2,6 +2,7 @@ import React from "react";
 import styled from "styled-components";
 import Author from "./Author";
 import { NavLink } from "react-router-dom";
+import LoginInMenu from "./login/LoginInMenu";
 
 export const SideExpand = 300;
 export const SideContract = 70;
@@ -61,6 +62,7 @@ const SideMenu = () => {
   return (
     <SideMenuContainer>
       <SideMenuHeader>선풍기</SideMenuHeader>
+      <LoginInMenu/>
       <SideMenuContent to="/">🏠<span> HOME</span></SideMenuContent>
       <SideMenuContent to="/wordle">🧩️<span> WORDLE</span></SideMenuContent>
       <SideMenuContent to="/comments">📝<span> 방명록</span></SideMenuContent>

@@ -1,9 +1,11 @@
 import { configureStore } from "@reduxjs/toolkit";
 import modalSlice from "./modalSlice";
+import userSlice from "./userSlice";
 
 const store = configureStore({
   reducer: {
     modal: modalSlice.reducer,
+    user: userSlice.reducer,
   },
 });
 
