@@ -65,7 +65,7 @@ const LoginOptionContainer = styled.div`
   width: calc(70% + 20px);
   max-width: 320px;
   display: flex;
-  justify-content: space-between;
+  justify-content: end;
   margin-top: 10px;
 `;
 
@@ -107,14 +107,16 @@ const Login = () => {
         dispatch(postLogin(body))
           .then(res => {
             if (res.payload.errorMessage) {
-              console.log("로그인 실패?")
+              console.log("로그인 실패?");
+              alert("아이디나 비밀번호가 틀렸습니다");
             } else {
               storage.set("loginInfo", body);
               navigate("/");
             }
-          })
+          });
       } catch (e) {
         console.log("로그인 Error");
+        alert("서버 문제로 로그인 실패");
       }
       return;
     }
@@ -124,14 +126,16 @@ const Login = () => {
         dispatch(postRegister(body))
           .then(res => {
             if (res.payload.errorMessage) {
-              console.log("이미 있는?")
+              console.log("이미 있는?");
+              alert("아이디가 중복되거나 너무 짧거나 너무 길거나 비밀번호도 적절하지 않음");
             } else {
               storage.set("loginInfo", body);
               navigate("/");
             }
-          })
+          });
       } catch (e) {
         console.log("회원가입 Error");
+        alert("서버 문제로 회원가입 실패");
       }
       return;
     }
@@ -145,7 +149,6 @@ const Login = () => {
       {
         btnText === "로그인" && (
           <LoginOptionContainer>
-            <div>정보기억하기</div>
             <RegisterButton onClick={onClickRegister}>회원가입</RegisterButton>
           </LoginOptionContainer>
         )

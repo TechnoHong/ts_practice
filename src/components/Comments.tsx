@@ -4,6 +4,7 @@ import styled from "styled-components";
 import TenorSearch from "./TenorSearch";
 import useInterval from "../hooks/useInterval";
 import { SideContract, SideExpand } from "./SideMenu";
+import { useAppSelector } from "../hooks/reduxHooks";
 
 type comment = {
   "id": number,
@@ -11,10 +12,12 @@ type comment = {
   "date": string,
   "url"?: string,
   "type": string,
+  "sender"?: string,
 }
 
 const HeaderContainer = styled.div`
   display: flex;
+  justify-content: space-between;
   padding: 0.5rem;
   color: white;
 `;
@@ -67,9 +70,18 @@ const CommentBody = styled.div<{ type: string }>`
   white-space: pre-wrap;
 `;
 
+const CommentSender = styled.div`
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 1px;
+  color: #dadada;
+  margin-bottom: 3px;
+`;
+
 const CommentDate = styled.div`
   font-size: 0.5rem;
   text-align: right;
+  color: gray;
 `;
 
 const InputContainer = styled.div`
@@ -96,8 +108,6 @@ const SubmitButton = styled.button`
 `;
 
 const HeaderIcon = styled.div`
-  flex: 1 1 0;
-
   &:hover {
     cursor: pointer;
   }
@@ -105,6 +115,11 @@ const HeaderIcon = styled.div`
   &:active {
     opacity: 0.5;
   }
+`;
+
+const AutoRefreshController = styled.div`
+  font-size: 0.5rem;
+  cursor: pointer;
 `;
 
 const GifImage = styled.img`
@@ -126,7 +141,11 @@ const Comments = () => {
   const [gifMode, setGifMode] = useState(false);
   const [error, setError] = useState(false);
   const [count, setCount] = useState(5);
+  const [autoRefresh, setAutoRefresh] = useState(true);
   const scrollRef = useRef<HTMLDivElement>(null);
+  const userData = useAppSelector(state => {
+    return state.user;
+  });
 
   useInterval(() => {
     if (count === 0) {
@@ -135,7 +154,7 @@ const Comments = () => {
     } else {
       setCount(count - 1);
     }
-  }, 1000);
+  }, autoRefresh ? 1000 : null);
 
   const scrollToBottom = () => {
     if (scrollRef.current) {
@@ -182,6 +201,7 @@ const Comments = () => {
         "date": new Date().toLocaleString(),
         "url": null,
         "type": "chat",
+        "sender": userData.userData.username || "비회원",
       })
         .then(() => {
           setInput("");
@@ -196,16 +216,27 @@ const Comments = () => {
     }
   };
 
+  const onAutoRefresh = () => {
+    setAutoRefresh(!autoRefresh);
+  }
+
   return (
     <ContentsContainer>
       <HeaderContainer>
         <HeaderIcon onClick={getComments}>♻️<span
           style={{ fontSize: "0.75rem", whiteSpace: "pre" }}> {count}초 뒤 새로고침..</span></HeaderIcon>
+        <AutoRefreshController onClick={onAutoRefresh}>자동 새로고침 {autoRefresh ? "켜짐" : "꺼짐"}</AutoRefreshController>
       </HeaderContainer>
       <CommentsContainer ref={scrollRef}>
         {(comments && !error) &&
           comments.map((cmt, index) => (
             <CommentItemContainer key={index}>
+              {
+                cmt.sender &&
+                <CommentSender>
+                  {cmt.sender}
+                </CommentSender>
+              }
               {
                 cmt.url &&
                 <GifImage src={cmt.url} />

@@ -3,6 +3,7 @@ import styled from "styled-components";
 import axios from "axios";
 import { ScrollMenu, VisibilityContext } from "react-horizontal-scrolling-menu";
 import "./TenorScrollbar.css";
+import { useAppSelector } from "../hooks/reduxHooks";
 
 type scrollVisibilityApiType = React.ContextType<typeof VisibilityContext>;
 
@@ -45,6 +46,9 @@ const TenorSearch = ({
                        getComments,
                      }: { input: string, gifMode: any, setInput: any, getComments: any }) => {
   const [gifs, setGifs] = useState<any[]>([]);
+  const userData = useAppSelector(state => {
+    return state.user;
+  });
 
   useEffect(() => {
     if (input) {
@@ -65,6 +69,8 @@ const TenorSearch = ({
       "body": null,
       "date": new Date().toLocaleString(),
       "url": url,
+      "type": "chat",
+      "sender": userData.userData.username || "비회원",
     })
       .then(() => {
         gifMode(false);

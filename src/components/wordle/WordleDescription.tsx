@@ -3,6 +3,7 @@ import styled from "styled-components";
 import axios from "axios";
 import ReactTooltip from "react-tooltip";
 import { lineType } from "./Wordle";
+import { useAppSelector } from "../../hooks/reduxHooks";
 
 const WordleDescriptionContainer = styled.div`
   display: flex;
@@ -181,6 +182,9 @@ const WordleDescription = ({ desc, tryCount, matrix }: WordleProps) => {
   };
   const [swag, setSwag] = useState(false);
   const [history, setHistory] = useState(initHistory);
+  const userData = useAppSelector(state => {
+    return state.user;
+  });
 
   useEffect(() => {
     if ((desc === "CORRECT" || desc === "FAILED") && !history.checkToday) {
@@ -213,10 +217,11 @@ const WordleDescription = ({ desc, tryCount, matrix }: WordleProps) => {
 
   const onSubmit = () => {
     axios.post("http://192.168.121.36:4000/api/comments", {
-      "body": `[Wordle] 🙈 누군가 ${tryCount} 번 만에 성공! 🙉‍\n${createResultString(matrix, tryCount)}`,
+      "body": `[Wordle] 🙈 ${getUserName(userData.userData.username, userData.logged)} ${tryCount} 번 만에 성공! 🙉‍\n${createResultString(matrix, tryCount)}`,
       "date": new Date().toLocaleString(),
       "url": null,
       "type": "wordleNotice",
+      "sender": null,
     })
       .then(() => {
         setSwag(true);
@@ -248,6 +253,14 @@ const WordleDescription = ({ desc, tryCount, matrix }: WordleProps) => {
     }
     return result;
   };
+
+  const getUserName = (userName: String, isLogged: Boolean) => {
+    if (isLogged) {
+      return userName + "님이";
+    } else {
+      return "누군가";
+    }
+  }
 
   return (
     <WordleDescriptionContainer>

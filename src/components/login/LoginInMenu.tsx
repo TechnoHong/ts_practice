@@ -1,9 +1,8 @@
 import React from "react";
 import styled from "styled-components";
 import { NavLink } from "react-router-dom";
-import { useAppDispatch, useAppSelector } from "../../hooks/reduxHooks";
-import { postLogout } from "../../store/userSlice";
-import storage from "../../lib/storage";
+import { useAppSelector } from "../../hooks/reduxHooks";
+import UserInfo from "./UserInfo";
 
 const AccountContainer = styled.div`
   margin: 20px 0;
@@ -35,7 +34,13 @@ const LoginButton = styled(NavLink)`
   }
 
   @media ( max-width: 767px ) {
-    display: none;
+    border: none;
+    background: transparent;
+    font-size: 0.5rem;
+    color: white;
+    transition: none;
+    box-shadow: none;
+    padding: 0;
   }
 `;
 
@@ -43,19 +48,11 @@ const LoginInMenu = () => {
   const userData = useAppSelector(state => {
     return state.user;
   });
-  const dispatch = useAppDispatch();
-
-  const onLogout = () => {
-    dispatch(postLogout())
-      .then(storage.remove("loginInfo"));
-
-    window.location.href = "/";
-  };
 
   return (
     <AccountContainer>
       {
-        userData.logged ? <button onClick={onLogout}>로그아웃</button>
+        userData.logged ? <UserInfo userState={userData}/>
           : <LoginButton to="/login">로그인</LoginButton>
       }
     </AccountContainer>

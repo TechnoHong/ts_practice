@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import styled from "styled-components";
+import { useAppSelector } from "../hooks/reduxHooks";
 
 type GreetingProps = {
   name: string,
@@ -82,6 +83,9 @@ const FanPowerControlBlock = styled.div<{ speed: number }>`
 const Greetings = ({ name }: GreetingProps) => {
   const [power, setPower] = useState(0);
   const [rotate, setRotate] = useState(false);
+  const userData = useAppSelector(state => {
+    return state.user;
+  });
 
   const onClickPower = (e: number) => {
     setPower(e);
@@ -91,11 +95,19 @@ const Greetings = ({ name }: GreetingProps) => {
     setRotate(!rotate);
   };
 
+  const getUsername = (username: String) => {
+    if (username) {
+      return username + "'s ";
+    } else {
+      return "";
+    }
+  }
+
   return (
     <>
       <FanRotationControlBlock rotate={rotate ? "running" : "paused"}>
         <FanPowerControlBlock speed={power}>
-          Hello, {name}
+          Hello, {getUsername(userData.userData.username) + name}
         </FanPowerControlBlock>
       </FanRotationControlBlock>
 

@@ -1,10 +1,12 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 
-interface UserState {
+export interface UserState {
   userData: {
     username: string;
     thumbnail: string;
+    point: number;
+    commentCount: number;
   };
   logged: boolean;
   validated: boolean;
@@ -14,6 +16,8 @@ const initialState: UserState = {
   userData: {
     username: "",
     thumbnail: "",
+    point: 0,
+    commentCount: 0,
   },
   logged: false,
   validated: false,
