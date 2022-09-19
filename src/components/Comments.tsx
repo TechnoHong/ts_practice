@@ -1,10 +1,11 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import axios from "axios";
 import styled from "styled-components";
 import TenorSearch from "./TenorSearch";
 import useInterval from "../hooks/useInterval";
 import { SideContract, SideExpand } from "./SideMenu";
 import { useAppSelector } from "../hooks/reduxHooks";
+import { useDragAndDrop } from "../hooks/useDragAndDrop";
 
 type comment = {
   "id": number,
@@ -142,10 +143,45 @@ const Comments = () => {
   const [error, setError] = useState(false);
   const [count, setCount] = useState(5);
   const [autoRefresh, setAutoRefresh] = useState(true);
+  const dragRef = useRef<HTMLDivElement | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
   const userData = useAppSelector(state => {
     return state.user;
   });
+
+  const onUploadFile = useCallback(async (e: React.ChangeEvent<HTMLInputElement> | any) => {
+    e.preventDefault();
+    if (e.dataTransfer.files) {
+      const uploadFile = e.dataTransfer.files[0];
+
+      const formData = new FormData();
+      formData.append("file", uploadFile);
+
+      try {
+        const res = await axios.post("http://192.168.121.36:4000/upload", formData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        });
+
+        axios.post("http://192.168.121.36:4000/api/comments", {
+          "body": null,
+          "date": new Date().toLocaleString(),
+          "url": "http://192.168.121.36:4000/uploads/" + res.data.filename,
+          "type": "customImg",
+          "sender": userData.userData.username || "비회원",
+        })
+          .then(() => {
+            setInput("");
+            getComments();
+          });
+
+      } catch (e) {
+        console.log(e);
+      }
+    }
+  }, []);
+  useDragAndDrop(onUploadFile, dragRef);
 
   useInterval(() => {
     if (count === 0) {
@@ -218,7 +254,7 @@ const Comments = () => {
 
   const onAutoRefresh = () => {
     setAutoRefresh(!autoRefresh);
-  }
+  };
 
   return (
     <ContentsContainer>
@@ -266,10 +302,17 @@ const Comments = () => {
         (gifMode && !error) &&
         <TenorSearch gifMode={setGifMode} input={input.slice(1)} setInput={setInput} getComments={getComments} />
       }
-      <InputContainer>
-        <InputInput placeholder="$로 시작해서 gif를 보내보세요" onChange={handleChange} value={input} onKeyDown={onKeyPress} />
+      <InputContainer ref={dragRef}>
+        <InputInput placeholder="$로 시작해서 gif를 검색 / 이미지파일을 여기에 드래그" onChange={handleChange} value={input} onKeyDown={onKeyPress} />
         <SubmitButton onClick={onSubmit}>등록</SubmitButton>
       </InputContainer>
+      <div>
+        <input
+          type="file"
+          id="fileUpload"
+          style={{ display: "none" }}
+        />
+      </div>
     </ContentsContainer>
   );
 };
