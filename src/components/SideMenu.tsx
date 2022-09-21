@@ -66,6 +66,7 @@ const SideMenu = () => {
       <SideMenuContent to="/">🏠<span> HOME</span></SideMenuContent>
       <SideMenuContent to="/wordle">🧩️<span> WORDLE</span></SideMenuContent>
       <SideMenuContent to="/comments">📝<span> 방명록</span></SideMenuContent>
+      <SideMenuContent to="/catch/painter">🎨<span> 공사중</span></SideMenuContent>
       <Author/>
     </SideMenuContainer>
   );

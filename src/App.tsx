@@ -9,6 +9,7 @@ import Login from "./components/login/Login";
 import storage from "./lib/storage";
 import { useAppDispatch } from "./hooks/reduxHooks";
 import { postLogin } from "./store/userSlice";
+import CatchPainter from "./components/catchmind/painter/CatchPainter";
 
 function App() {
   const dispatch = useAppDispatch();
@@ -34,6 +35,7 @@ function App() {
           <Route path="/comments" element={<Comments />} />
           <Route path="/wordle" element={<Wordle />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/catch/painter" element={<CatchPainter />} />
         </Routes>
       </div>
     </>
