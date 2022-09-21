@@ -1,16 +1,16 @@
 {
   "files": {
-    "main.css": "https://TechnoHong.github.io/ts_practice/static/css/main.423d3af8.css",
-    "main.js": "https://TechnoHong.github.io/ts_practice/static/js/main.6ab02b87.js",
-    "static/js/787.c834e6e3.chunk.js": "https://TechnoHong.github.io/ts_practice/static/js/787.c834e6e3.chunk.js",
-    "static/media/DoHyeon-Regular.ttf": "https://TechnoHong.github.io/ts_practice/static/media/DoHyeon-Regular.33a15385076163ccf1b8.ttf",
-    "index.html": "https://TechnoHong.github.io/ts_practice/index.html",
-    "main.423d3af8.css.map": "https://TechnoHong.github.io/ts_practice/static/css/main.423d3af8.css.map",
-    "main.6ab02b87.js.map": "https://TechnoHong.github.io/ts_practice/static/js/main.6ab02b87.js.map",
-    "787.c834e6e3.chunk.js.map": "https://TechnoHong.github.io/ts_practice/static/js/787.c834e6e3.chunk.js.map"
+    "main.css": "/ts_practice/static/css/main.962d67db.css",
+    "main.js": "/ts_practice/static/js/main.81e617d7.js",
+    "static/js/787.c834e6e3.chunk.js": "/ts_practice/static/js/787.c834e6e3.chunk.js",
+    "static/media/DoHyeon-Regular.ttf": "/ts_practice/static/media/DoHyeon-Regular.33a15385076163ccf1b8.ttf",
+    "index.html": "/ts_practice/index.html",
+    "main.962d67db.css.map": "/ts_practice/static/css/main.962d67db.css.map",
+    "main.81e617d7.js.map": "/ts_practice/static/js/main.81e617d7.js.map",
+    "787.c834e6e3.chunk.js.map": "/ts_practice/static/js/787.c834e6e3.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.423d3af8.css",
-    "static/js/main.6ab02b87.js"
+    "static/css/main.962d67db.css",
+    "static/js/main.81e617d7.js"
   ]
 }
