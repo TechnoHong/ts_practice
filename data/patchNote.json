@@ -1,8 +1,26 @@
 [
   {
+    "date": "2022-09-19",
+    "title": "v1.5.1",
+    "content": "- 방명록에서 이미지 파일을 드래그해 업로드할 수 있습니다. (모바일 미지원)",
+    "imgURL": "upload.json"
+  },
+  {
+    "date": "2022-09-16",
+    "title": "v1.5.0",
+    "content": "- 로그인 구현\n- 방명록 자동새로고침 toggle 추가\n- 로그인 후 방명록 작성하거나 wordle 결과 자랑 시 아이디가 표시됩니다.",
+    "imgURL": "login.json"
+  },
+  {
+    "date": "2022-09-07",
+    "title": "v1.4.0",
+    "content": "- 반응형, Mobile 환경 지원 (beta)\n- 홈페이지 리뉴얼",
+    "imgURL": "mobile.json"
+  },
+  {
     "date": "2022-09-01",
     "title": "v1.3.4",
-    "content": "- Wordle 자랑하기 기능 개선\n- YY선임님 컴퓨터에서도 잘 돌아갑니다\n- 기타 버그 수정",
+    "content": "- Wordle 자랑하기 기능 개선\n- 선풍기 잔고장 수리\n- 기타 버그 수정",
     "imgURL": "trash.json"
   },
   {
